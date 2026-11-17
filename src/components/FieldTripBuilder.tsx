@@ -97,6 +97,8 @@ export function buildGoogleMapsDirectionsUrl(stops: FieldTripStop[]): string {
 }
 
 interface FieldTripBuilderProps {
+  isOpen: boolean;
+  onClose: () => void;
   stops: FieldTripStop[];
   onAddStop: (stop: FieldTripStop) => void;
   onRemoveStop: (stopId: string) => void;
@@ -106,6 +108,8 @@ interface FieldTripBuilderProps {
 }
 
 export const FieldTripBuilder: React.FC<FieldTripBuilderProps> = ({
+  isOpen,
+  onClose,
   stops,
   onAddStop,
   onRemoveStop,
@@ -114,7 +118,6 @@ export const FieldTripBuilder: React.FC<FieldTripBuilderProps> = ({
   onFocusStopOnMap,
 }) => {
   const { language, t } = useTranslation();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [copiedSuccess, setCopiedSuccess] = useState<boolean>(false);
   const [quickPickId, setQuickPickId] = useState<string>('');
 
@@ -210,253 +213,227 @@ export const FieldTripBuilder: React.FC<FieldTripBuilderProps> = ({
     setQuickPickId('');
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed bottom-6 right-4 z-35 pointer-events-auto no-print">
-      {/* Collapsed Floating Badge Button */}
-      {!isOpen && (
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className={`px-4 py-2.5 rounded-2xl font-semibold text-xs sm:text-sm shadow-[0_14px_35px_rgba(0,0,0,0.75)] flex items-center gap-2.5 transition-all cursor-pointer border-2 ${
-            stops.length > 0
-              ? 'bg-gradient-to-r from-[#1E3A8A] to-[#0F1C30] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.35)]'
-              : 'bg-[#0F1C30]/92 backdrop-blur-xl text-[#F8FAFC] border-slate-700/80 hover:border-[#D4AF37] hover:bg-[#1E3A8A]/70'
-          }`}
-        >
-          <Bus className="w-4 h-4 text-[#D4AF37]" />
-          <span>
-            {t.fieldTrip.badgeBtn(stops.length, MAX_FIELD_TRIP_STOPS)}
-          </span>
-          {stops.length >= 2 && (
-            <span className="px-2 py-0.5 rounded-md bg-[#D4AF37] text-[#09111E] font-mono text-[10px] font-bold tabular-nums">
-              {routeMetrics.totalMiles} mi
-            </span>
-          )}
-        </button>
-      )}
-
-      {/* Expanded Field Trip Planner Drawer */}
-      {isOpen && (
-        <aside
-          aria-label={t.fieldTrip.drawerAria}
-          className="w-[calc(100vw-1.5rem)] sm:w-[395px] bg-[#161920]/96 backdrop-blur-2xl border-2 border-[#D4AF37]/65 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[72vh]"
-        >
-          {/* Drawer Header */}
-          <div className="px-4 py-3 border-b border-[#C5A059]/30 bg-[#1D3557]/45 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#D4AF37] text-[#0D0F12] flex items-center justify-center shrink-0 font-bold">
-                <Bus className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-[#D4AF37] font-bold">
-                  {t.fieldTrip.headerKicker}
-                </div>
-                <h3 className="font-serif text-base font-bold text-[#F4F1EA]">
-                  {t.fieldTrip.headerTitle(stops.length, MAX_FIELD_TRIP_STOPS)}
-                </h3>
-              </div>
+    <aside
+      aria-label={t.fieldTrip.drawerAria}
+      className="fixed left-20 top-20 z-30 w-80 sm:w-96 max-h-[75vh] bg-[#0F1C30]/95 backdrop-blur-xl border border-[#C5A059]/40 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-[#F8FAFC] pointer-events-auto no-print"
+    >
+      {/* Drawer Header */}
+      <div className="px-4 py-3 bg-[#09111E]/90 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-xl bg-[#D4AF37] text-[#09111E] flex items-center justify-center shrink-0 font-bold">
+            <Bus className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[9px] font-mono uppercase tracking-[0.16em] text-[#D4AF37] font-bold truncate">
+              {t.fieldTrip.headerKicker}
             </div>
+            <h3 className="font-serif text-sm font-bold text-[#F8FAFC] truncate">
+              {t.fieldTrip.headerTitle(stops.length, MAX_FIELD_TRIP_STOPS)}
+            </h3>
+          </div>
+        </div>
 
-            <div className="flex items-center gap-1">
-              {stops.length > 0 && (
-                <button
-                  type="button"
-                  onClick={onClearStops}
-                  title={t.fieldTrip.clearTitle}
-                  className="px-2 py-1 rounded-lg bg-[#9B2226]/70 hover:bg-[#9B2226] text-[10px] text-[#F4F1EA] font-medium cursor-pointer"
-                >
-                  {t.fieldTrip.clearBtn}
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                aria-label={t.fieldTrip.minimizeAria}
-                className="p-1.5 rounded-lg bg-[#0D0F12]/80 border border-[#C5A059]/30 text-[#A39E93] hover:text-[#F4F1EA] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+        <div className="flex items-center gap-1 shrink-0">
+          {stops.length > 0 && (
+            <button
+              type="button"
+              onClick={onClearStops}
+              title={t.fieldTrip.clearTitle}
+              className="px-2 py-1 rounded-lg bg-[#B22234]/80 hover:bg-[#B22234] text-[10px] text-[#F8FAFC] font-medium cursor-pointer"
+            >
+              {t.fieldTrip.clearBtn}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t.fieldTrip.minimizeAria}
+            className="p-1.5 rounded-lg bg-[#09111E]/80 border border-slate-700 hover:border-[#D4AF37] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Distance & Driving Time Telemetry Bar */}
+      {stops.length >= 2 && (
+        <div className="px-4 py-2.5 bg-[#09111E]/90 border-b border-slate-800 grid grid-cols-2 gap-3 text-xs shrink-0">
+          <div className="flex items-center gap-2">
+            <Route className="w-4 h-4 text-[#D4AF37] shrink-0" />
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-[#94A3B8]">
+                {t.fieldTrip.estRoadDist}
+              </div>
+              <div className="font-mono text-sm font-bold text-[#D4AF37] tabular-nums">
+                {routeMetrics.totalMiles} {t.fieldTrip.milesUnit}
+              </div>
             </div>
           </div>
 
-          {/* Distance & Driving Time Telemetry Bar */}
-          {stops.length >= 2 && (
-            <div className="px-4 py-2.5 bg-[#0D0F12]/90 border-b border-[#C5A059]/25 grid grid-cols-2 gap-3 text-xs">
-              <div className="flex items-center gap-2">
-                <Route className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-[#A39E93]">
-                    {t.fieldTrip.estRoadDist}
-                  </div>
-                  <div className="font-mono text-sm font-bold text-[#D4AF37] tabular-nums">
-                    {routeMetrics.totalMiles} {t.fieldTrip.milesUnit}
-                  </div>
-                </div>
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-[#D4AF37] shrink-0" />
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-[#94A3B8]">
+                {t.fieldTrip.drivingTimeLabel}
               </div>
-
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-[#A39E93]">
-                    {t.fieldTrip.drivingTimeLabel}
-                  </div>
-                  <div className="font-mono text-sm font-bold text-[#F4F1EA] tabular-nums">
-                    {routeMetrics.durationLabel}
-                  </div>
-                </div>
+              <div className="font-mono text-sm font-bold text-[#F8FAFC] tabular-nums">
+                {routeMetrics.durationLabel}
               </div>
             </div>
-          )}
+          </div>
+        </div>
+      )}
 
-          {/* Quick Add Selector when fewer than 5 stops */}
-          {stops.length < MAX_FIELD_TRIP_STOPS && (
-            <div className="px-4 py-2.5 bg-[#0D0F12]/55 border-b border-[#C5A059]/20 flex items-center gap-2">
-              <Plus className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-              <select
-                value={quickPickId}
-                onChange={(e) => handleQuickAddPhmc(e.target.value)}
-                aria-label={t.fieldTrip.quickAddPlaceholder}
-                className="w-full bg-[#0D0F12] border border-[#C5A059]/30 rounded-lg px-2.5 py-1.5 text-xs text-[#F4F1EA] focus:outline-none focus:border-[#D4AF37]"
-              >
-                <option value="">{t.fieldTrip.quickAddPlaceholder}</option>
-                {PHMC_MARKERS_DATA.filter(
-                  (m) =>
-                    !stops.some(
-                      (s) => s.id === m.id || s.id === `phmc-${m.id}`
-                    )
-                ).map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.title} ({m.cityOrTown}, {m.countyName})
-                  </option>
-                ))}
-              </select>
+      {/* Quick Add Selector when fewer than 5 stops */}
+      {stops.length < MAX_FIELD_TRIP_STOPS && (
+        <div className="px-4 py-2.5 bg-[#09111E]/70 border-b border-slate-800 flex items-center gap-2 shrink-0">
+          <Plus className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+          <select
+            value={quickPickId}
+            onChange={(e) => handleQuickAddPhmc(e.target.value)}
+            aria-label={t.fieldTrip.quickAddPlaceholder}
+            className="w-full bg-[#09111E] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#D4AF37]"
+          >
+            <option value="">{t.fieldTrip.quickAddPlaceholder}</option>
+            {PHMC_MARKERS_DATA.filter(
+              (m) =>
+                !stops.some(
+                  (s) => s.id === m.id || s.id === `phmc-${m.id}`
+                )
+            ).map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.title} ({m.cityOrTown}, {m.countyName})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Stops List */}
+      <div className="p-3.5 overflow-y-auto space-y-2 flex-1">
+        {stops.length === 0 ? (
+          <div className="p-5 rounded-xl bg-[#09111E]/75 border border-slate-800 text-center space-y-2">
+            <MapPin className="w-7 h-7 text-[#D4AF37] mx-auto opacity-85" />
+            <div className="font-serif text-sm font-bold text-[#F8FAFC]">
+              {t.fieldTrip.emptyTitle}
             </div>
-          )}
+            <p className="text-xs text-[#94A3B8] leading-relaxed">
+              {t.fieldTrip.emptyDesc}
+            </p>
+          </div>
+        ) : (
+          stops.map((stop, idx) => {
+            const legFromPrev =
+              idx > 0 ? routeMetrics.legMiles[idx - 1] : null;
+            return (
+              <React.Fragment key={stop.id}>
+                {legFromPrev !== null && (
+                  <div className="flex items-center gap-2 pl-4 text-[10px] font-mono text-[#D4AF37]/90">
+                    <span>
+                      {t.fieldTrip.legEstimate(
+                        legFromPrev,
+                        formatDrivingDuration(legFromPrev)
+                      )}
+                    </span>
+                  </div>
+                )}
 
-          {/* Stops List */}
-          <div className="p-3.5 overflow-y-auto space-y-2 flex-1">
-            {stops.length === 0 ? (
-              <div className="p-5 rounded-xl bg-[#0D0F12]/60 border border-[#C5A059]/20 text-center space-y-2">
-                <MapPin className="w-7 h-7 text-[#D4AF37] mx-auto opacity-80" />
-                <div className="font-serif text-sm font-bold text-[#F4F1EA]">
-                  {t.fieldTrip.emptyTitle}
-                </div>
-                <p className="text-xs text-[#A39E93] leading-relaxed">
-                  {t.fieldTrip.emptyDesc}
-                </p>
-              </div>
-            ) : (
-              stops.map((stop, idx) => {
-                const legFromPrev =
-                  idx > 0 ? routeMetrics.legMiles[idx - 1] : null;
-                return (
-                  <React.Fragment key={stop.id}>
-                    {legFromPrev !== null && (
-                      <div className="flex items-center gap-2 pl-4 text-[10px] font-mono text-[#D4AF37]/90">
-                        <span>
-                          {t.fieldTrip.legEstimate(
-                            legFromPrev,
-                            formatDrivingDuration(legFromPrev)
-                          )}
-                        </span>
+                <div className="p-2.5 rounded-xl bg-[#09111E]/85 border border-slate-800 hover:border-[#D4AF37]/60 transition-colors flex items-start justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onFocusStopOnMap(stop)}
+                    className="flex items-start gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
+                  >
+                    <span className="w-6 h-6 rounded-full bg-[#1E3A8A] border border-[#D4AF37] font-mono text-xs font-bold text-[#D4AF37] flex items-center justify-center shrink-0 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="font-serif text-xs sm:text-sm font-bold text-[#F8FAFC] truncate">
+                        {stop.title}
                       </div>
-                    )}
-
-                    <div className="p-2.5 rounded-xl bg-[#0D0F12]/80 border border-[#C5A059]/30 hover:border-[#D4AF37]/60 transition-colors flex items-start justify-between gap-2">
-                      <button
-                        type="button"
-                        onClick={() => onFocusStopOnMap(stop)}
-                        className="flex items-start gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
-                      >
-                        <span className="w-6 h-6 rounded-full bg-[#1D3557] border border-[#D4AF37] font-mono text-xs font-bold text-[#D4AF37] flex items-center justify-center shrink-0 mt-0.5">
-                          {idx + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="font-serif text-xs sm:text-sm font-bold text-[#F4F1EA] truncate">
-                            {stop.title}
-                          </div>
-                          <div className="text-[11px] text-[#D4AF37] truncate">
-                            {stop.subtitle} · {stop.countyName} County
-                          </div>
-                        </div>
-                      </button>
-
-                      {/* Reorder Up/Down & Remove Controls */}
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => onMoveStop(idx, 'up')}
-                          title={t.fieldTrip.moveUpTitle}
-                          aria-label={t.fieldTrip.moveUpTitle}
-                          className="p-1 rounded-md bg-[#161920] border border-[#C5A059]/25 text-[#A39E93] hover:text-[#F4F1EA] disabled:opacity-30 cursor-pointer"
-                        >
-                          <ChevronUp className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === stops.length - 1}
-                          onClick={() => onMoveStop(idx, 'down')}
-                          title={t.fieldTrip.moveDownTitle}
-                          aria-label={t.fieldTrip.moveDownTitle}
-                          className="p-1 rounded-md bg-[#161920] border border-[#C5A059]/25 text-[#A39E93] hover:text-[#F4F1EA] disabled:opacity-30 cursor-pointer"
-                        >
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onRemoveStop(stop.id)}
-                          title={t.fieldTrip.removeStopTitle}
-                          aria-label={t.fieldTrip.removeStopTitle}
-                          className="p-1 rounded-md bg-[#9B2226]/70 hover:bg-[#9B2226] text-[#F4F1EA] cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                      <div className="text-[11px] text-[#D4AF37] truncate">
+                        {stop.subtitle} · {stop.countyName} County
                       </div>
                     </div>
-                  </React.Fragment>
-                );
-              })
+                  </button>
+
+                  {/* Reorder Up/Down & Remove Controls */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() => onMoveStop(idx, 'up')}
+                      title={t.fieldTrip.moveUpTitle}
+                      aria-label={t.fieldTrip.moveUpTitle}
+                      className="p-1 rounded-md bg-[#0F1C30] border border-slate-700 text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-30 cursor-pointer"
+                    >
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={idx === stops.length - 1}
+                      onClick={() => onMoveStop(idx, 'down')}
+                      title={t.fieldTrip.moveDownTitle}
+                      aria-label={t.fieldTrip.moveDownTitle}
+                      className="p-1 rounded-md bg-[#0F1C30] border border-slate-700 text-[#94A3B8] hover:text-[#F8FAFC] disabled:opacity-30 cursor-pointer"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onRemoveStop(stop.id)}
+                      title={t.fieldTrip.removeStopTitle}
+                      aria-label={t.fieldTrip.removeStopTitle}
+                      className="p-1 rounded-md bg-[#B22234]/80 hover:bg-[#B22234] text-[#F8FAFC] cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          })
+        )}
+      </div>
+
+      {/* Footer Action Buttons: Export to Google Maps & Copy for WhatsApp/Email */}
+      {stops.length > 0 && (
+        <div className="p-3.5 border-t border-slate-800 bg-[#09111E]/95 space-y-2 shrink-0">
+          <a
+            href={googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2.5 px-4 rounded-xl bg-[#D4AF37] hover:bg-[#e3be42] text-[#09111E] font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-colors"
+          >
+            <span>{t.fieldTrip.openGoogleMapsBtn}</span>
+            <ExternalLink className="w-4 h-4" />
+          </a>
+
+          <button
+            type="button"
+            onClick={handleCopyItinerary}
+            className="w-full py-2 px-3 rounded-xl bg-[#0F1C30] hover:bg-[#1E3A8A]/70 border border-slate-700 hover:border-[#D4AF37] text-xs font-medium text-[#F8FAFC] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+          >
+            {copiedSuccess ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-[#52B788]" />
+                <span className="text-[#52B788] font-semibold">
+                  {t.fieldTrip.copiedSuccessMsg}
+                </span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span>{t.fieldTrip.copyItineraryBtn}</span>
+              </>
             )}
-          </div>
-
-          {/* Footer Action Buttons: Export to Google Maps & Copy for WhatsApp/Email */}
-          {stops.length > 0 && (
-            <div className="p-3.5 border-t border-[#C5A059]/30 bg-[#0D0F12]/90 space-y-2">
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 px-4 rounded-xl bg-[#D4AF37] hover:bg-[#e3be42] text-[#0D0F12] font-bold text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-colors"
-              >
-                <span>{t.fieldTrip.openGoogleMapsBtn}</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-
-              <button
-                type="button"
-                onClick={handleCopyItinerary}
-                className="w-full py-2 px-3 rounded-xl bg-[#161920] hover:bg-[#1D3557]/70 border border-[#C5A059]/35 hover:border-[#D4AF37] text-xs font-medium text-[#F4F1EA] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                {copiedSuccess ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-[#52B788]" />
-                    <span className="text-[#52B788] font-semibold">
-                      {t.fieldTrip.copiedSuccessMsg}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 text-[#D4AF37]" />
-                    <span>{t.fieldTrip.copyItineraryBtn}</span>
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </aside>
+          </button>
+        </div>
       )}
-    </div>
+    </aside>
   );
 };
 

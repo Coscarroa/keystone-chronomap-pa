@@ -2,6 +2,8 @@ import React from 'react';
 import {
   Map as MapIcon,
   MapPin,
+  Sparkles,
+  Bus,
   GraduationCap,
   X,
   ArrowLeftRight,
@@ -40,11 +42,17 @@ import {
   PHMC_CATEGORY_TRANSLATIONS_EN,
 } from '../i18n/translations';
 
-export type LeftDrawerType = 'territories' | 'layers' | null;
+export type LeftDrawerType =
+  | 'territories'
+  | 'layers'
+  | 'ai'
+  | 'trips'
+  | 'teacher'
+  | null;
 
 interface LeftControlRailProps {
   activeDrawer: LeftDrawerType;
-  onToggleDrawer: (drawer: Exclude<LeftDrawerType, null>) => void;
+  onSelectDrawer: (drawer: Exclude<LeftDrawerType, null>) => void;
   onCloseDrawer: () => void;
   // 1. Territories & Comparison
   turfScenario: HistoricalScenarioId | 'none';
@@ -71,14 +79,15 @@ interface LeftControlRailProps {
   activeEra: HistoricalEra;
   highlightEraFrontier: boolean;
   onResetView: () => void;
-  // 3. Teacher Mode
+  // 4. My Field Trips Badge Count
+  fieldTripStopsCount: number;
+  // 5. Teacher Mode
   isTeacherMode: boolean;
-  onToggleTeacherMode: () => void;
 }
 
 export const LeftControlRail: React.FC<LeftControlRailProps> = ({
   activeDrawer,
-  onToggleDrawer,
+  onSelectDrawer,
   onCloseDrawer,
   turfScenario,
   onSelectTurfScenario,
@@ -103,8 +112,8 @@ export const LeftControlRail: React.FC<LeftControlRailProps> = ({
   activeEra,
   highlightEraFrontier,
   onResetView,
+  fieldTripStopsCount,
   isTeacherMode,
-  onToggleTeacherMode,
 }) => {
   const { language, t } = useTranslation();
 
@@ -129,130 +138,177 @@ export const LeftControlRail: React.FC<LeftControlRailProps> = ({
   };
 
   return (
-    <div className="fixed left-4 top-20 z-30 flex items-start gap-2.5 pointer-events-none no-print">
-      {/* Compact Vertical Tactile Rail (w-12) */}
+    <>
+      {/* Compact Vertical Tactile Rail (w-12) with 5 Primary Modules */}
       <nav
-        aria-label={
-          language === 'en'
-            ? 'Map Controls & Layers Rail'
-            : 'Riel de Controles y Capas del Mapa'
-        }
-        className="w-12 bg-[#0F1C30]/90 backdrop-blur-xl border border-[#C5A059]/30 rounded-2xl p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.78)] flex flex-col items-center gap-2 pointer-events-auto"
+        aria-label={t.leftRail.railAria}
+        className="fixed left-4 top-20 z-35 w-12 bg-[#0F1C30]/90 backdrop-blur-xl border border-[#C5A059]/30 rounded-2xl p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.78)] flex flex-col items-center gap-2 pointer-events-auto no-print"
       >
-        {/* 1. Territories Button */}
-        <button
-          type="button"
-          onClick={() => onToggleDrawer('territories')}
-          title={
-            language === 'en'
-              ? '🗺️ Territories & Historical Borders (67 Counties / 1682 / 1787 / Compare)'
-              : '🗺️ Territorios y Fronteras Históricas (67 Condados / 1682 / 1787 / Comparar)'
-          }
-          aria-label={language === 'en' ? 'Territories' : 'Territorios'}
-          aria-expanded={activeDrawer === 'territories'}
-          className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
-            activeDrawer === 'territories' ||
-            turfScenario !== 'none' ||
-            isCompareMode
-              ? 'bg-[#1D4ED8] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_12px_rgba(29,78,216,0.55)]'
-              : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
-          }`}
-        >
-          <MapIcon className="w-4 h-4 text-[#D4AF37]" />
-          {turfScenario !== 'none' && (
-            <span className="absolute -top-1 -right-1 px-1 rounded-full bg-[#D4AF37] text-[#09111E] font-mono text-[8px] font-bold">
-              {turfScenario}
-            </span>
-          )}
-        </button>
+        {/* 1. 🗺️ Territories & Borders */}
+        <div className="relative group">
+          <button
+            type="button"
+            onClick={() => onSelectDrawer('territories')}
+            title={t.leftRail.territoriesTooltip}
+            aria-label={t.leftRail.territoriesTooltip}
+            aria-expanded={activeDrawer === 'territories'}
+            className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+              activeDrawer === 'territories' ||
+              turfScenario !== 'none' ||
+              isCompareMode
+                ? 'bg-[#1D4ED8] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_12px_rgba(29,78,216,0.55)]'
+                : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
+            }`}
+          >
+            <MapIcon className="w-4 h-4 text-[#D4AF37]" />
+            {turfScenario !== 'none' && (
+              <span className="absolute -top-1 -right-1 px-1 rounded-full bg-[#D4AF37] text-[#09111E] font-mono text-[8px] font-bold">
+                {turfScenario}
+              </span>
+            )}
+          </button>
 
-        {/* 2. Layers & PHMC Plaques Button */}
-        <button
-          type="button"
-          onClick={() => onToggleDrawer('layers')}
-          title={
-            language === 'en'
-              ? '📍 Map Layers & Official PHMC Plaques'
-              : '📍 Capas y Placas Históricas PHMC'
-          }
-          aria-label={
-            language === 'en' ? 'Layers and Plaques' : 'Capas y Placas'
-          }
-          aria-expanded={activeDrawer === 'layers'}
-          className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
-            activeDrawer === 'layers'
-              ? 'bg-[#1D4ED8] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_12px_rgba(29,78,216,0.55)]'
-              : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
-          }`}
-        >
-          <MapPin className="w-4 h-4 text-[#D4AF37]" />
-          {activeLayersCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#1E3A8A] border border-[#D4AF37] text-[#D4AF37] font-mono text-[9px] font-bold flex items-center justify-center">
-              {activeLayersCount}
-            </span>
-          )}
-        </button>
+          {/* Bilingual Hover Tooltip */}
+          <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#09111E]/95 border border-[#D4AF37]/70 text-[11px] font-semibold text-[#F8FAFC] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-50">
+            {t.leftRail.territoriesTooltip}
+          </span>
+        </div>
+
+        {/* 2. 📍 Layers & PHMC Plaques */}
+        <div className="relative group">
+          <button
+            type="button"
+            onClick={() => onSelectDrawer('layers')}
+            title={t.leftRail.layersTooltip}
+            aria-label={t.leftRail.layersTooltip}
+            aria-expanded={activeDrawer === 'layers'}
+            className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+              activeDrawer === 'layers'
+                ? 'bg-[#1D4ED8] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_12px_rgba(29,78,216,0.55)]'
+                : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
+            }`}
+          >
+            <MapPin className="w-4 h-4 text-[#D4AF37]" />
+            {activeLayersCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#1E3A8A] border border-[#D4AF37] text-[#D4AF37] font-mono text-[9px] font-bold flex items-center justify-center tabular-nums">
+                {activeLayersCount}
+              </span>
+            )}
+          </button>
+
+          <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#09111E]/95 border border-[#D4AF37]/70 text-[11px] font-semibold text-[#F8FAFC] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-50">
+            {t.leftRail.layersTooltip}
+          </span>
+        </div>
+
+        {/* 3. ✨ AI Guide (Voice & Text Assistant) */}
+        <div className="relative group">
+          <button
+            type="button"
+            onClick={() => onSelectDrawer('ai')}
+            title={t.leftRail.aiGuideTooltip}
+            aria-label={t.leftRail.aiGuideTooltip}
+            aria-expanded={activeDrawer === 'ai'}
+            className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+              activeDrawer === 'ai'
+                ? 'bg-[#1D4ED8] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_14px_rgba(29,78,216,0.65)]'
+                : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+          </button>
+
+          <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#09111E]/95 border border-[#D4AF37]/70 text-[11px] font-semibold text-[#F8FAFC] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-50">
+            {t.leftRail.aiGuideTooltip}
+          </span>
+        </div>
+
+        {/* 4. 🚌 My Field Trips (GPS Itinerary Planner with Golden Numeric Badge) */}
+        <div className="relative group">
+          <button
+            type="button"
+            onClick={() => onSelectDrawer('trips')}
+            title={t.leftRail.fieldTripsTooltip(fieldTripStopsCount)}
+            aria-label={t.leftRail.fieldTripsTooltip(fieldTripStopsCount)}
+            aria-expanded={activeDrawer === 'trips'}
+            className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+              activeDrawer === 'trips'
+                ? 'bg-[#1D4ED8] text-[#F8FAFC] border-[#D4AF37] shadow-[0_0_14px_rgba(29,78,216,0.65)]'
+                : fieldTripStopsCount > 0
+                  ? 'bg-[#1E3A8A]/75 text-[#F8FAFC] border-[#D4AF37]/80 hover:bg-[#1D4ED8]'
+                  : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
+            }`}
+          >
+            <Bus className="w-4 h-4 text-[#D4AF37]" />
+            {fieldTripStopsCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#D4AF37] text-[#09111E] border border-[#09111E] font-mono text-[9px] font-extrabold flex items-center justify-center tabular-nums shadow-sm">
+                {fieldTripStopsCount}
+              </span>
+            )}
+          </button>
+
+          <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#09111E]/95 border border-[#D4AF37]/70 text-[11px] font-semibold text-[#F8FAFC] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-50">
+            {t.leftRail.fieldTripsTooltip(fieldTripStopsCount)}
+          </span>
+        </div>
 
         <div className="w-6 border-t border-slate-700/60 my-0.5" />
 
-        {/* 3. Teacher Mode Button */}
-        <button
-          type="button"
-          onClick={() => {
-            onCloseDrawer();
-            onToggleTeacherMode();
-          }}
-          title={t.header.teacherModeTitle}
-          aria-label={t.header.teacherModeBtn}
-          aria-pressed={isTeacherMode}
-          className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
-            isTeacherMode
-              ? 'bg-[#D4AF37] text-[#09111E] border-[#F8FAFC] shadow-[0_0_16px_rgba(212,175,55,0.55)]'
-              : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
-          }`}
-        >
-          <GraduationCap
-            className={`w-4 h-4 ${
-              isTeacherMode ? 'text-[#09111E]' : 'text-[#D4AF37]'
+        {/* 5. 🎓 Teacher Mode */}
+        <div className="relative group">
+          <button
+            type="button"
+            onClick={() => onSelectDrawer('teacher')}
+            title={t.leftRail.teacherModeTooltip}
+            aria-label={t.leftRail.teacherModeTooltip}
+            aria-pressed={isTeacherMode || activeDrawer === 'teacher'}
+            className={`relative w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+              isTeacherMode || activeDrawer === 'teacher'
+                ? 'bg-[#D4AF37] text-[#09111E] border-[#F8FAFC] shadow-[0_0_16px_rgba(212,175,55,0.55)]'
+                : 'bg-[#09111E]/80 text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E3A8A]/60 border-slate-700/60'
             }`}
-          />
-        </button>
+          >
+            <GraduationCap
+              className={`w-4 h-4 ${
+                isTeacherMode || activeDrawer === 'teacher'
+                  ? 'text-[#09111E]'
+                  : 'text-[#D4AF37]'
+              }`}
+            />
+          </button>
+
+          <span className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg bg-[#09111E]/95 border border-[#D4AF37]/70 text-[11px] font-semibold text-[#F8FAFC] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-50">
+            {t.leftRail.teacherModeTooltip}
+          </span>
+        </div>
       </nav>
 
-      {/* DRAWER 1: TERRITORIES & HISTORICAL BOUNDARIES */}
+      {/* DOCKED LEFT DRAWER 1: TERRITORIES & BORDERS */}
       {activeDrawer === 'territories' && (
         <aside
-          aria-label={
-            language === 'en'
-              ? 'Territories and Historical Borders'
-              : 'Territorios y Fronteras Históricas'
-          }
-          className="pointer-events-auto w-72 sm:w-80 bg-[#0F1C30]/95 backdrop-blur-2xl border border-[#C5A059]/45 rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.85)] overflow-hidden text-[#F8FAFC]"
+          aria-label={t.leftRail.territoriesDrawerTitle}
+          className="fixed left-20 top-20 z-30 w-80 sm:w-96 max-h-[75vh] bg-[#0F1C30]/95 backdrop-blur-xl border border-[#C5A059]/40 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-[#F8FAFC] pointer-events-auto no-print"
         >
-          <div className="px-4 py-3 bg-[#09111E]/90 border-b border-slate-800 flex items-center justify-between gap-2">
+          <div className="px-4 py-3 bg-[#09111E]/90 border-b border-slate-800 flex items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2 min-w-0">
               <MapIcon className="w-4 h-4 text-[#D4AF37] shrink-0" />
               <h3 className="font-serif text-sm font-bold text-[#F8FAFC] truncate">
-                {language === 'en'
-                  ? 'Territories & Borders'
-                  : 'Territorios y Fronteras'}
+                {t.leftRail.territoriesDrawerTitle}
               </h3>
             </div>
             <button
               type="button"
               onClick={onCloseDrawer}
               aria-label="Close drawer"
-              className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-slate-800/60 cursor-pointer"
+              className="p-1.5 rounded-lg bg-[#09111E]/80 border border-slate-700 hover:border-[#D4AF37] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="p-3.5 space-y-2.5 max-h-[72vh] overflow-y-auto">
+          <div className="p-3.5 space-y-2.5 overflow-y-auto flex-1">
             <div className="text-[11px] text-[#94A3B8] leading-snug">
-              {language === 'en'
-                ? 'Switch between modern county jurisdictions and Turf.js historical territory unions:'
-                : 'Alterna entre los 67 condados actuales y las fusiones territoriales históricas (Turf.js):'}
+              {t.leftRail.territoriesIntro}
             </div>
 
             <div className="space-y-1.5">
@@ -261,26 +317,17 @@ export const LeftControlRail: React.FC<LeftControlRailProps> = ({
                   {
                     id: 'none',
                     title: t.map.pill67Counties,
-                    subtitle:
-                      language === 'en'
-                        ? 'Current 67 county borders (STATEFP 42)'
-                        : 'Fronteras actuales de los 67 condados',
+                    subtitle: t.leftRail.modern67Sub,
                   },
                   {
                     id: '1682',
                     title: t.map.pill1682Penn,
-                    subtitle:
-                      language === 'en'
-                        ? 'Philadelphia, Bucks, Chester + Native Lands'
-                        : 'Philadelphia, Bucks, Chester + Tierras Indígenas',
+                    subtitle: t.leftRail.penn1682Sub,
                   },
                   {
                     id: '1787',
                     title: t.map.pill1787Constitution,
-                    subtitle:
-                      language === 'en'
-                        ? '18 Revolutionary & Constitutional Counties'
-                        : '18 Condados de la etapa Constitucional',
+                    subtitle: t.leftRail.const1787Sub,
                   },
                 ] as const
               ).map((item) => {
@@ -374,23 +421,17 @@ export const LeftControlRail: React.FC<LeftControlRailProps> = ({
         </aside>
       )}
 
-      {/* DRAWER 2: LAYERS, PHMC PLAQUES, BATTLES, ROUTES & REGIONS LEGEND */}
+      {/* DOCKED LEFT DRAWER 2: LAYERS & PHMC PLAQUES */}
       {activeDrawer === 'layers' && (
         <aside
-          aria-label={
-            language === 'en'
-              ? 'Map Layers and Historical Plaques'
-              : 'Capas del Mapa y Placas Históricas'
-          }
-          className="pointer-events-auto w-80 sm:w-96 bg-[#0F1C30]/95 backdrop-blur-2xl border border-[#C5A059]/45 rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.85)] overflow-hidden text-[#F8FAFC] divide-y divide-slate-800/80 max-h-[78vh] flex flex-col"
+          aria-label={t.leftRail.layersDrawerTitle}
+          className="fixed left-20 top-20 z-30 w-80 sm:w-96 max-h-[75vh] bg-[#0F1C30]/95 backdrop-blur-xl border border-[#C5A059]/40 rounded-2xl shadow-2xl overflow-hidden text-[#F8FAFC] divide-y divide-slate-800/80 flex flex-col pointer-events-auto no-print"
         >
           <div className="px-4 py-3 bg-[#09111E]/90 flex items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2 min-w-0">
               <Layers className="w-4 h-4 text-[#D4AF37] shrink-0" />
               <h3 className="font-serif text-sm font-bold text-[#F8FAFC] truncate">
-                {language === 'en'
-                  ? 'Layers & PHMC Plaques'
-                  : 'Capas y Placas PHMC'}
+                {t.leftRail.layersDrawerTitle}
               </h3>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -409,14 +450,14 @@ export const LeftControlRail: React.FC<LeftControlRailProps> = ({
                 type="button"
                 onClick={onCloseDrawer}
                 aria-label="Close drawer"
-                className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-slate-800/60 cursor-pointer"
+                className="p-1.5 rounded-lg bg-[#09111E]/80 border border-slate-700 hover:border-[#D4AF37] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          <div className="overflow-y-auto divide-y divide-slate-800/80">
+          <div className="overflow-y-auto divide-y divide-slate-800/80 flex-1">
             {/* Section A: Official PHMC Blue Plaques + Category Filter */}
             <div className="p-3.5 space-y-2.5">
               <div className="flex items-center justify-between gap-2">
@@ -650,7 +691,7 @@ export const LeftControlRail: React.FC<LeftControlRailProps> = ({
           </div>
         </aside>
       )}
-    </div>
+    </>
   );
 };
 

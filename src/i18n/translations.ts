@@ -558,6 +558,25 @@ export const UI_TRANSLATIONS = {
         'Microphone permission was denied or is unavailable in this browser. You can still type any question or command below!',
       typingIndicator: 'Consulting Pennsylvania Historical Archives...',
     },
+    leftRail: {
+      railAria: 'Map Controls, AI Guide & Field Trips Rail',
+      territoriesTooltip: '🗺️ Territories & Borders',
+      territoriesDrawerTitle: 'Territories & Borders',
+      territoriesIntro:
+        'Switch between modern county jurisdictions and Turf.js historical territory unions:',
+      modern67Sub: 'Current 67 county borders (STATEFP 42)',
+      penn1682Sub: 'Philadelphia, Bucks, Chester + Native Lands',
+      const1787Sub: '18 Revolutionary & Constitutional Counties',
+      layersTooltip: '📍 Layers & PHMC Plaques',
+      layersDrawerTitle: 'Layers & PHMC Plaques',
+      aiGuideTooltip: '✨ AI Guide',
+      fieldTripsTooltip: (count: number) =>
+        count > 0 ? `🚌 My Field Trips (${count})` : '🚌 My Field Trips',
+      teacherModeTooltip: '🎓 Teacher Mode',
+      stopAddedToast: (title: string, count: number, max: number) =>
+        `🚌 Added "${title}" to My Field Trips (${count}/${max})`,
+      openTripsBtn: 'View Itinerary',
+    },
   },
   es: {
     header: {
@@ -1103,6 +1122,25 @@ export const UI_TRANSLATIONS = {
       micPermissionError:
         'El permiso de micrófono fue denegado o no está disponible en este navegador. ¡Puedes escribir cualquier pregunta o comando abajo!',
       typingIndicator: 'Consultando los Archivos Históricos de Pensilvania...',
+    },
+    leftRail: {
+      railAria: 'Riel de Controles, Asistente IA y Mi Excursión',
+      territoriesTooltip: '🗺️ Territorios y Fronteras',
+      territoriesDrawerTitle: 'Territorios y Fronteras',
+      territoriesIntro:
+        'Alterna entre los 67 condados actuales y las fusiones territoriales históricas (Turf.js):',
+      modern67Sub: 'Fronteras actuales de los 67 condados',
+      penn1682Sub: 'Philadelphia, Bucks, Chester + Tierras Indígenas',
+      const1787Sub: '18 Condados de la etapa Constitucional',
+      layersTooltip: '📍 Capas y Placas PHMC',
+      layersDrawerTitle: 'Capas y Placas PHMC',
+      aiGuideTooltip: '✨ Asistente IA',
+      fieldTripsTooltip: (count: number) =>
+        count > 0 ? `🚌 Mi Excursión (${count})` : '🚌 Mi Excursión',
+      teacherModeTooltip: '🎓 Modo Docente',
+      stopAddedToast: (title: string, count: number, max: number) =>
+        `🚌 "${title}" añadido a Mi Excursión (${count}/${max})`,
+      openTripsBtn: 'Ver Ruta',
     },
   },
 };

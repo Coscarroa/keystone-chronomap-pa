@@ -8,9 +8,11 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  useRef,
   Suspense,
 } from 'react';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import { Bus, CheckCircle2, X } from 'lucide-react';
 import Header from './components/Header';
 import LeftControlRail, { LeftDrawerType } from './components/LeftControlRail';
 import MapContainer from './components/MapContainer';
@@ -45,7 +47,7 @@ import {
 import { AIUIAction } from './services/aiAgentBrain';
 import { MapChronologyFocusPayload } from './components/ChronologyDrawer';
 import { HistoricalScenarioId } from './data/historicalTerritoriesConfig';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useTranslation } from './context/LanguageContext';
 import {
   ALL_COUNTIES_LIST,
   CountyRecord,
@@ -87,6 +89,58 @@ const LazyDigitalEncyclopediaModal = React.lazy(
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 const GUIDE_SEEN_STORAGE_KEY = 'keystone_guide_seen';
 
+interface FieldTripToastState {
+  title: string;
+  count: number;
+}
+
+const FieldTripToastNotification: React.FC<{
+  toast: FieldTripToastState | null;
+  onDismiss: () => void;
+  onOpenFieldTripsDrawer: () => void;
+}> = ({ toast, onDismiss, onOpenFieldTripsDrawer }) => {
+  const { t } = useTranslation();
+
+  if (!toast) return null;
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed top-20 left-20 z-40 max-w-sm bg-[#0F1C30]/95 backdrop-blur-xl border border-[#D4AF37] rounded-2xl px-3.5 py-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex items-center gap-2.5 text-xs text-[#F8FAFC] pointer-events-auto no-print"
+    >
+      <div className="w-7 h-7 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] flex items-center justify-center shrink-0">
+        <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="font-semibold text-[#F8FAFC] truncate">
+          {t.leftRail.stopAddedToast(
+            toast.title,
+            toast.count,
+            MAX_FIELD_TRIP_STOPS
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={onOpenFieldTripsDrawer}
+          className="mt-0.5 inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#D4AF37] hover:underline cursor-pointer"
+        >
+          <Bus className="w-3 h-3" />
+          <span>{t.leftRail.openTripsBtn}</span>
+        </button>
+      </div>
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label="Dismiss notification"
+        className="p-1 rounded-lg text-[#94A3B8] hover:text-[#F8FAFC] cursor-pointer"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+};
+
 export default function App() {
   const [quotaExceeded, setQuotaExceeded] = useState(false);
   const [geoData, setGeoData] = useState<PACountiesGeoJSON | null>(null);
@@ -97,7 +151,7 @@ export default function App() {
   const [selectedCounty, setSelectedCounty] = useState<CountyRecord | null>(
     PA_COUNTIES_DATA['Philadelphia'] || null
   );
-  // Mutual Exclusion State between Left Control Rail Drawer and Right InfoPanel
+  // Single state controlling all 5 icons on the LeftControlRail with mutual exclusion against InfoPanel
   const [activeLeftDrawer, setActiveLeftDrawer] =
     useState<LeftDrawerType>(null);
   const [isInfoPanelOpen, setIsInfoPanelOpen] = useState<boolean>(false);
@@ -205,6 +259,10 @@ export default function App() {
     return [];
   });
 
+  const [fieldTripToast, setFieldTripToast] =
+    useState<FieldTripToastState | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
+
   // Sync Field Trip stops to localStorage ('keystone_field_trip')
   useEffect(() => {
     try {
@@ -216,6 +274,14 @@ export default function App() {
       // Ignore storage write errors
     }
   }, [fieldTripStops]);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handleQuotaExceeded = () => setQuotaExceeded(true);
@@ -312,19 +378,29 @@ export default function App() {
   }, [activeEra]);
 
   /**
-   * RULE 1 (Mutual Exclusion): Opening any drawer on the LeftControlRail
-   * automatically hides the right County InfoPanel so the map is never boxed in.
+   * RULE 1 (Mutual Exclusion): All 5 icons on the LeftControlRail are controlled
+   * under `activeLeftDrawer`. Clicking any icon automatically closes the right
+   * County InfoPanel (`setIsInfoPanelOpen(false)`).
    */
-  const handleToggleLeftDrawer = useCallback(
+  const handleSelectLeftDrawer = useCallback(
     (drawer: Exclude<LeftDrawerType, null>) => {
-      setActiveLeftDrawer((prev) => {
-        const next = prev === drawer ? null : drawer;
-        if (next !== null) {
-          setIsInfoPanelOpen(false);
-          setIsTeacherMode(false);
-        }
-        return next;
-      });
+      setIsInfoPanelOpen(false);
+
+      if (drawer === 'teacher') {
+        setIsTeacherMode((prevTeacher) => {
+          const nextTeacher = !prevTeacher;
+          setActiveLeftDrawer(nextTeacher ? 'teacher' : null);
+          if (!nextTeacher) {
+            setWhiteboardTool('navigate');
+          }
+          return nextTeacher;
+        });
+        return;
+      }
+
+      setIsTeacherMode(false);
+      setWhiteboardTool('navigate');
+      setActiveLeftDrawer((prev) => (prev === drawer ? null : drawer));
     },
     []
   );
@@ -344,6 +420,7 @@ export default function App() {
     if (county) {
       setActiveLeftDrawer(null);
       setIsTeacherMode(false);
+      setWhiteboardTool('navigate');
       setIsInfoPanelOpen(true);
     } else {
       setIsInfoPanelOpen(false);
@@ -409,11 +486,29 @@ export default function App() {
     [selectedPhmcCategory]
   );
 
+  /**
+   * Adds a stop to the Field Trip itinerary, increments the golden badge counter
+   * on the `🚌` icon in the left rail, and shows a brief Toast notification
+   * without abruptly closing the InfoPanel dossier the user is reading.
+   */
   const handleAddFieldTripStop = useCallback((stop: FieldTripStop) => {
     setFieldTripStops((prev) => {
       if (prev.some((s) => s.id === stop.id)) return prev;
       if (prev.length >= MAX_FIELD_TRIP_STOPS) return prev;
-      return [...prev, stop];
+      const updated = [...prev, stop];
+
+      setFieldTripToast({
+        title: stop.title,
+        count: updated.length,
+      });
+      if (toastTimerRef.current) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+      toastTimerRef.current = window.setTimeout(() => {
+        setFieldTripToast(null);
+      }, 3400);
+
+      return updated;
     });
   }, []);
 
@@ -541,11 +636,7 @@ export default function App() {
             onOpenLeadersModal={() => setIsLeadersModalOpen(true)}
             onOpenWelcomeGuide={() => setIsWelcomeGuideOpen(true)}
             isTeacherMode={isTeacherMode}
-            onToggleTeacherMode={() => {
-              setActiveLeftDrawer(null);
-              setIsInfoPanelOpen(false);
-              setIsTeacherMode((prev) => !prev);
-            }}
+            onToggleTeacherMode={() => handleSelectLeftDrawer('teacher')}
             showPhmcLayer={showPhmcLayer}
             onTogglePhmcLayer={() => setShowPhmcLayer((prev) => !prev)}
             selectedPhmcCategory={selectedPhmcCategory}
@@ -565,10 +656,10 @@ export default function App() {
             onToggleLegendOpen={() => setIsLegendOpen((prev) => !prev)}
           />
 
-          {/* Compact Vertical Left Control Rail (Territories, Layers & PHMC Plaques, Teacher Mode) */}
+          {/* Compact Vertical Left Control Rail (5 Primary Modules: Territories, Layers, AI Guide, Field Trips, Teacher Mode) */}
           <LeftControlRail
             activeDrawer={activeLeftDrawer}
-            onToggleDrawer={handleToggleLeftDrawer}
+            onSelectDrawer={handleSelectLeftDrawer}
             onCloseDrawer={() => setActiveLeftDrawer(null)}
             turfScenario={turfScenario}
             onSelectTurfScenario={handleSelectTurfScenario}
@@ -600,11 +691,19 @@ export default function App() {
             activeEra={activeEra}
             highlightEraFrontier={highlightEraFrontier}
             onResetView={handleResetView}
+            fieldTripStopsCount={fieldTripStops.length}
             isTeacherMode={isTeacherMode}
-            onToggleTeacherMode={() => {
-              setActiveLeftDrawer(null);
+          />
+
+          {/* Non-intrusive Toast Notification when adding a Field Trip stop from InfoPanel */}
+          <FieldTripToastNotification
+            toast={fieldTripToast}
+            onDismiss={() => setFieldTripToast(null)}
+            onOpenFieldTripsDrawer={() => {
+              setFieldTripToast(null);
               setIsInfoPanelOpen(false);
-              setIsTeacherMode((prev) => !prev);
+              setIsTeacherMode(false);
+              setActiveLeftDrawer('trips');
             }}
           />
 
@@ -694,6 +793,9 @@ export default function App() {
                     onSelectCounty={(county) => handleSelectCounty(county)}
                     onCloseTeacherMode={() => {
                       setIsTeacherMode(false);
+                      setActiveLeftDrawer((prev) =>
+                        prev === 'teacher' ? null : prev
+                      );
                       setWhiteboardTool('navigate');
                     }}
                   />
@@ -737,8 +839,10 @@ export default function App() {
                 }}
               />
 
-              {/* Phase 6 Module 2: Floating Field Trip Itinerary Builder (Bottom-Right below AI Guide) */}
+              {/* DOCKED LEFT DRAWER 4: My Field Trips (GPS Route Planner) */}
               <FieldTripBuilder
+                isOpen={activeLeftDrawer === 'trips'}
+                onClose={() => setActiveLeftDrawer(null)}
                 stops={fieldTripStops}
                 onAddStop={handleAddFieldTripStop}
                 onRemoveStop={handleRemoveFieldTripStop}
@@ -824,9 +928,9 @@ export default function App() {
             onOpenCompareMode={() => setIsCompareMode(true)}
             onOpenMapsGallery={() => setIsMapsGalleryOpen(true)}
             onActivateTeacherMode={() => {
-              setActiveLeftDrawer(null);
               setIsInfoPanelOpen(false);
               setIsTeacherMode(true);
+              setActiveLeftDrawer('teacher');
             }}
           />
 
@@ -860,9 +964,9 @@ export default function App() {
             isOpen={isAboutOutreachOpen}
             onClose={() => setIsAboutOutreachOpen(false)}
             onActivateTeacherMode={() => {
-              setActiveLeftDrawer(null);
               setIsInfoPanelOpen(false);
               setIsTeacherMode(true);
+              setActiveLeftDrawer('teacher');
             }}
             onOpenCountyCatalog={() => setIsCatalogOpen(true)}
           />
@@ -885,8 +989,10 @@ export default function App() {
             </Suspense>
           )}
 
-          {/* Phase 15: Floating Voice & Text AI Guide (Bottom-Right above Field Trip Builder) */}
+          {/* DOCKED LEFT DRAWER 3: AI Guide (Voice & Text Conversational Assistant) */}
           <KeystoneAIAssistant
+            isOpen={activeLeftDrawer === 'ai'}
+            onClose={() => setActiveLeftDrawer(null)}
             selectedCounty={selectedCounty}
             activeEra={activeEra}
             isTeacherMode={isTeacherMode}
@@ -929,9 +1035,9 @@ export default function App() {
                   setIsComicEncyclopediaOpen(true);
                   break;
                 case 'TOGGLE_TEACHER_MODE':
-                  setActiveLeftDrawer(null);
                   setIsInfoPanelOpen(false);
                   setIsTeacherMode(action.enable);
+                  setActiveLeftDrawer(action.enable ? 'teacher' : null);
                   break;
                 case 'OPEN_TRIVIA':
                   setIsTriviaModalOpen(true);
