@@ -211,7 +211,7 @@ export const FieldTripBuilder: React.FC<FieldTripBuilderProps> = ({
   };
 
   return (
-    <div className="fixed right-4 bottom-32 xl:bottom-8 z-35 pointer-events-auto no-print">
+    <div className="fixed bottom-6 right-4 z-35 pointer-events-auto no-print">
       {/* Collapsed Floating Badge Button */}
       {!isOpen && (
         <button

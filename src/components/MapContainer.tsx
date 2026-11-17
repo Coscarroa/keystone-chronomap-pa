@@ -20,7 +20,6 @@ import {
 import {
   HistoricalScenarioId,
 } from '../data/historicalTerritoriesConfig';
-import MapOverlayControls from './MapOverlayControls';
 import { HistoricalEventItem } from '../data/historicalEventsData';
 import { HistoricalRouteItem } from '../data/historicalRoutesData';
 import { VintageMapRecord } from '../data/vintageMapsData';
@@ -77,9 +76,12 @@ interface MapContainerProps {
   onSelectPhmcMarker: (marker: PhmcMarkerRecord | null) => void;
   fieldTripStops: FieldTripStop[];
   onAddFieldTripStop: (stop: FieldTripStop) => void;
-  // Phase 8: Regions Legend visibility controlled from Header or MapOverlayControls
+  // Phase 8: Regions Legend visibility
   isLegendOpen: boolean;
   onToggleLegendOpen: () => void;
+  // Territorial Union Scenario controlled from LeftControlRail
+  turfScenario?: HistoricalScenarioId | 'none';
+  onSelectTurfScenario?: (scenario: HistoricalScenarioId | 'none') => void;
   // Phase 11: Chronology Map Focus Target ("Locate on Map")
   chronologyFocusTarget?: {
     lat: number;
@@ -512,32 +514,33 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   onSelectPhmcMarker,
   fieldTripStops,
   onAddFieldTripStop,
-  isLegendOpen,
-  onToggleLegendOpen,
+  isLegendOpen: _isLegendOpen,
+  onToggleLegendOpen: _onToggleLegendOpen,
+  turfScenario: externalTurfScenario,
+  onSelectTurfScenario: externalOnSelectTurfScenario,
   chronologyFocusTarget,
 }) => {
   const [hoveredCounty, setHoveredCounty] = useState<HoveredCountyState | null>(
     null
   );
-  const [turfScenario, setTurfScenario] = useState<
+  const [internalTurfScenario, setInternalTurfScenario] = useState<
     HistoricalScenarioId | 'none'
   >('none');
+
+  const turfScenario =
+    externalTurfScenario !== undefined
+      ? externalTurfScenario
+      : internalTurfScenario;
 
   const { language, locale, t } = useTranslation();
   const apiLoadingStatus = useApiLoadingStatus();
 
   useEffect(() => {
     if (chronologyFocusTarget?.turfScenario !== undefined) {
-      setTurfScenario(chronologyFocusTarget.turfScenario);
+      setInternalTurfScenario(chronologyFocusTarget.turfScenario);
+      externalOnSelectTurfScenario?.(chronologyFocusTarget.turfScenario);
     }
-  }, [chronologyFocusTarget]);
-
-  const handleSelectTurfScenario = (mode: HistoricalScenarioId | 'none') => {
-    setTurfScenario(mode);
-    if (mode !== 'none') {
-      onSelectCounty(null);
-    }
-  };
+  }, [chronologyFocusTarget, externalOnSelectTurfScenario]);
 
   return (
     <main className="relative w-full h-screen bg-[#09111E] overflow-hidden select-none no-print">
@@ -628,18 +631,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
           background:
             'radial-gradient(circle at center, transparent 60%, rgba(9, 17, 30, 0.65) 100%)',
         }}
-      />
-
-      {/* Phase 8: Clean Top-Left Floating Territorial Pill Bar & Collapsible Regions Legend */}
-      <MapOverlayControls
-        turfScenario={turfScenario}
-        onSelectTurfScenario={handleSelectTurfScenario}
-        selectedRegion={selectedRegion}
-        onSelectRegion={onSelectRegion}
-        activeEra={activeEra}
-        highlightEraFrontier={highlightEraFrontier}
-        isLegendOpen={isLegendOpen}
-        onToggleLegendOpen={onToggleLegendOpen}
       />
 
       {/* Live Hover County Inspector Pill (Top Center below Header) */}

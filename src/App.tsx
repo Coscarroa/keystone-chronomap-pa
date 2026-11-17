@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import Header from './components/Header';
+import LeftControlRail, { LeftDrawerType } from './components/LeftControlRail';
 import MapContainer from './components/MapContainer';
 import InfoPanel from './components/InfoPanel';
 import Timeline from './components/Timeline';
@@ -96,6 +97,14 @@ export default function App() {
   const [selectedCounty, setSelectedCounty] = useState<CountyRecord | null>(
     PA_COUNTIES_DATA['Philadelphia'] || null
   );
+  // Mutual Exclusion State between Left Control Rail Drawer and Right InfoPanel
+  const [activeLeftDrawer, setActiveLeftDrawer] =
+    useState<LeftDrawerType>(null);
+  const [isInfoPanelOpen, setIsInfoPanelOpen] = useState<boolean>(false);
+  const [turfScenario, setTurfScenario] = useState<
+    HistoricalScenarioId | 'none'
+  >('none');
+
   const [activeEra, setActiveEra] = useState<HistoricalEra>(
     HISTORICAL_ERAS[5] // Default to 'Actualidad' (67 Counties)
   );
@@ -302,14 +311,54 @@ export default function App() {
       .length;
   }, [activeEra]);
 
+  /**
+   * RULE 1 (Mutual Exclusion): Opening any drawer on the LeftControlRail
+   * automatically hides the right County InfoPanel so the map is never boxed in.
+   */
+  const handleToggleLeftDrawer = useCallback(
+    (drawer: Exclude<LeftDrawerType, null>) => {
+      setActiveLeftDrawer((prev) => {
+        const next = prev === drawer ? null : drawer;
+        if (next !== null) {
+          setIsInfoPanelOpen(false);
+          setIsTeacherMode(false);
+        }
+        return next;
+      });
+    },
+    []
+  );
+
   const handleSelectRegion = useCallback((region: RegionId | 'all') => {
     setSelectedRegion(region);
     setSelectedCounty(null);
+    setIsInfoPanelOpen(false);
   }, []);
 
+  /**
+   * RULE 1 (Mutual Exclusion): Selecting a county on the map or search
+   * automatically closes any open left drawer before opening InfoPanel on the right.
+   */
   const handleSelectCounty = useCallback((county: CountyRecord | null) => {
     setSelectedCounty(county);
+    if (county) {
+      setActiveLeftDrawer(null);
+      setIsTeacherMode(false);
+      setIsInfoPanelOpen(true);
+    } else {
+      setIsInfoPanelOpen(false);
+    }
   }, []);
+
+  const handleSelectTurfScenario = useCallback(
+    (scenario: HistoricalScenarioId | 'none') => {
+      setTurfScenario(scenario);
+      if (scenario !== 'none') {
+        setIsInfoPanelOpen(false);
+      }
+    },
+    []
+  );
 
   const handleSelectEra = useCallback((era: HistoricalEra) => {
     setActiveEra(era);
@@ -324,6 +373,7 @@ export default function App() {
       }
       setShowEventsLayer(true);
       setSelectedPhmcMarker(null);
+      setActiveLeftDrawer(null);
       setSelectedEvent(event);
       if (
         activeEra.id !== 'present' &&
@@ -347,6 +397,7 @@ export default function App() {
       }
       setShowPhmcLayer(true);
       setSelectedEvent(null);
+      setActiveLeftDrawer(null);
       if (
         selectedPhmcCategory !== 'all' &&
         selectedPhmcCategory !== marker.category
@@ -427,9 +478,12 @@ export default function App() {
 
   const handleResetView = useCallback(() => {
     setSelectedCounty(null);
+    setIsInfoPanelOpen(false);
+    setActiveLeftDrawer(null);
     setSelectedEvent(null);
     setSelectedPhmcMarker(null);
     setSelectedRegion('all');
+    setTurfScenario('none');
     setResetTrigger((prev) => prev + 1);
   }, []);
 
@@ -459,7 +513,7 @@ export default function App() {
           language="en"
           region="US"
         >
-          {/* Floating Header with Region Filter, Quick County Search, Compare Mode, Historical Modules, Classroom Mode & EN/ES Switcher */}
+          {/* Simplified 56px Top Bar: Brand + Universal Search + EN|ES + 2D/3D Encyclopedia + Menu */}
           <Header
             selectedRegion={selectedRegion}
             onSelectRegion={handleSelectRegion}
@@ -471,7 +525,11 @@ export default function App() {
             activeEraLabel={activeEra.yearLabel}
             onToggleCatalog={() => setIsCatalogOpen(true)}
             isCompareMode={isCompareMode}
-            onToggleCompareMode={() => setIsCompareMode((prev) => !prev)}
+            onToggleCompareMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsCompareMode((prev) => !prev);
+            }}
             showEventsLayer={showEventsLayer}
             onToggleEventsLayer={() => setShowEventsLayer((prev) => !prev)}
             selectedEvent={selectedEvent}
@@ -483,7 +541,11 @@ export default function App() {
             onOpenLeadersModal={() => setIsLeadersModalOpen(true)}
             onOpenWelcomeGuide={() => setIsWelcomeGuideOpen(true)}
             isTeacherMode={isTeacherMode}
-            onToggleTeacherMode={() => setIsTeacherMode((prev) => !prev)}
+            onToggleTeacherMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsTeacherMode((prev) => !prev);
+            }}
             showPhmcLayer={showPhmcLayer}
             onTogglePhmcLayer={() => setShowPhmcLayer((prev) => !prev)}
             selectedPhmcCategory={selectedPhmcCategory}
@@ -503,6 +565,49 @@ export default function App() {
             onToggleLegendOpen={() => setIsLegendOpen((prev) => !prev)}
           />
 
+          {/* Compact Vertical Left Control Rail (Territories, Layers & PHMC Plaques, Teacher Mode) */}
+          <LeftControlRail
+            activeDrawer={activeLeftDrawer}
+            onToggleDrawer={handleToggleLeftDrawer}
+            onCloseDrawer={() => setActiveLeftDrawer(null)}
+            turfScenario={turfScenario}
+            onSelectTurfScenario={handleSelectTurfScenario}
+            isCompareMode={isCompareMode}
+            onToggleCompareMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsCompareMode((prev) => !prev);
+            }}
+            showPhmcLayer={showPhmcLayer}
+            onTogglePhmcLayer={() => setShowPhmcLayer((prev) => !prev)}
+            selectedPhmcCategory={selectedPhmcCategory}
+            onSelectPhmcCategory={(cat) => {
+              setShowPhmcLayer(true);
+              setSelectedPhmcCategory(cat);
+            }}
+            selectedPhmcMarker={selectedPhmcMarker}
+            onSelectPhmcMarker={(marker) => handleSelectPhmcMarker(marker)}
+            showEventsLayer={showEventsLayer}
+            onToggleEventsLayer={() => setShowEventsLayer((prev) => !prev)}
+            selectedEvent={selectedEvent}
+            onSelectEvent={(ev) => handleSelectEvent(ev)}
+            activeRoute={activeRoute}
+            onSelectRoute={(route) => setActiveRoute(route)}
+            isLegendOpen={isLegendOpen}
+            onToggleLegendOpen={() => setIsLegendOpen((prev) => !prev)}
+            selectedRegion={selectedRegion}
+            onSelectRegion={handleSelectRegion}
+            activeEra={activeEra}
+            highlightEraFrontier={highlightEraFrontier}
+            onResetView={handleResetView}
+            isTeacherMode={isTeacherMode}
+            onToggleTeacherMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsTeacherMode((prev) => !prev);
+            }}
+          />
+
           {isCompareMode ? (
             /* Interactive Before vs. Today Split-Curtain Comparison Mode */
             <BeforeAfterCompare
@@ -519,7 +624,7 @@ export default function App() {
                 geoError={geoError}
                 selectedRegion={selectedRegion}
                 onSelectRegion={handleSelectRegion}
-                selectedCounty={selectedCounty}
+                selectedCounty={isInfoPanelOpen ? selectedCounty : null}
                 onSelectCounty={handleSelectCounty}
                 activeEra={activeEra}
                 highlightEraFrontier={highlightEraFrontier}
@@ -542,6 +647,8 @@ export default function App() {
                 onAddFieldTripStop={handleAddFieldTripStop}
                 isLegendOpen={isLegendOpen}
                 onToggleLegendOpen={() => setIsLegendOpen((prev) => !prev)}
+                turfScenario={turfScenario}
+                onSelectTurfScenario={handleSelectTurfScenario}
                 chronologyFocusTarget={chronologyFocusTarget}
               />
 
@@ -599,14 +706,21 @@ export default function App() {
               {/* Minimalist Archival SVG Compass Rose */}
               <CompassRose />
 
-              {/* County Historical & Economic Dossier Panel with MediaWiki Portraits, Milestones, PHMC Plaques & Primary Sources */}
+              {/* County Historical & Economic Dossier Panel (Mutually Exclusive with LeftControlRail Drawers) */}
               <InfoPanel
-                county={selectedCounty}
+                county={
+                  isInfoPanelOpen && activeLeftDrawer === null
+                    ? selectedCounty
+                    : null
+                }
                 activeEra={activeEra}
-                onClose={() => setSelectedCounty(null)}
+                onClose={() => {
+                  setIsInfoPanelOpen(false);
+                  setSelectedCounty(null);
+                }}
                 onSelectCounty={(county) => handleSelectCounty(county)}
                 onSelectRegion={(region) => {
-                  setSelectedRegion(region);
+                  handleSelectRegion(region);
                 }}
                 wikiLeadersMap={wikiLeadersMap}
                 onSelectLeader={handleOpenLeaderDetail}
@@ -623,7 +737,7 @@ export default function App() {
                 }}
               />
 
-              {/* Phase 6 Module 2: Floating Field Trip Itinerary Builder & Google Maps Multi-Stop Route Launcher */}
+              {/* Phase 6 Module 2: Floating Field Trip Itinerary Builder (Bottom-Right below AI Guide) */}
               <FieldTripBuilder
                 stops={fieldTripStops}
                 onAddStop={handleAddFieldTripStop}
@@ -633,7 +747,7 @@ export default function App() {
                 onFocusStopOnMap={handleFocusStopOnMap}
               />
 
-              {/* Floating Bottom Chronological Bar (Taxonomic Selector + 6 Historical Eras) & Subtle Footer */}
+              {/* Compact 2-Row Foldable Chronology Bar */}
               <Timeline
                 activeEra={activeEra}
                 onSelectEra={handleSelectEra}
@@ -646,14 +760,21 @@ export default function App() {
                 onOpenSupportModal={() => setIsSupportModalOpen(true)}
                 onOpenAboutOutreachModal={() => setIsAboutOutreachOpen(true)}
                 onLocateChronologyItem={(payload: MapChronologyFocusPayload) => {
+                  setActiveLeftDrawer(null);
                   if (
                     payload.countyName &&
                     PA_COUNTIES_DATA[payload.countyName] &&
                     !payload.turfScenario
                   ) {
                     setSelectedCounty(PA_COUNTIES_DATA[payload.countyName]);
-                  } else if (payload.turfScenario && payload.turfScenario !== 'none') {
+                    setIsInfoPanelOpen(true);
+                  } else if (
+                    payload.turfScenario &&
+                    payload.turfScenario !== 'none'
+                  ) {
                     setSelectedCounty(null);
+                    setIsInfoPanelOpen(false);
+                    setTurfScenario(payload.turfScenario);
                   }
                   setChronologyFocusTarget({
                     lat: payload.lat,
@@ -702,7 +823,11 @@ export default function App() {
             onClose={handleCloseWelcomeGuide}
             onOpenCompareMode={() => setIsCompareMode(true)}
             onOpenMapsGallery={() => setIsMapsGalleryOpen(true)}
-            onActivateTeacherMode={() => setIsTeacherMode(true)}
+            onActivateTeacherMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsTeacherMode(true);
+            }}
           />
 
           {/* Phase 4.4: Printable PDE 8.2 Academic Standards Worksheet Generator Modal */}
@@ -734,7 +859,11 @@ export default function App() {
           <AboutOutreachModal
             isOpen={isAboutOutreachOpen}
             onClose={() => setIsAboutOutreachOpen(false)}
-            onActivateTeacherMode={() => setIsTeacherMode(true)}
+            onActivateTeacherMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsTeacherMode(true);
+            }}
             onOpenCountyCatalog={() => setIsCatalogOpen(true)}
           />
 
@@ -756,7 +885,7 @@ export default function App() {
             </Suspense>
           )}
 
-          {/* Phase 15: Floating Voice & Text AI Guide with Map & Module Action Dispatcher */}
+          {/* Phase 15: Floating Voice & Text AI Guide (Bottom-Right above Field Trip Builder) */}
           <KeystoneAIAssistant
             selectedCounty={selectedCounty}
             activeEra={activeEra}
@@ -781,6 +910,8 @@ export default function App() {
                   handleSelectEra(action.era);
                   break;
                 case 'OPEN_COMPARE_MODE':
+                  setActiveLeftDrawer(null);
+                  setIsInfoPanelOpen(false);
                   setIsCompareMode(true);
                   break;
                 case 'OPEN_3D_STAGE':
@@ -798,6 +929,8 @@ export default function App() {
                   setIsComicEncyclopediaOpen(true);
                   break;
                 case 'TOGGLE_TEACHER_MODE':
+                  setActiveLeftDrawer(null);
+                  setIsInfoPanelOpen(false);
                   setIsTeacherMode(action.enable);
                   break;
                 case 'OPEN_TRIVIA':
