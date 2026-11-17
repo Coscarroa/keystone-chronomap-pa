@@ -1,0 +1,6 @@
+{
+  "name": "Keystone ChronoMap — Atlas Cartográfico Histórico de Pensilvania",
+  "description": "Atlas cartográfico interactivo para explorar la evolución territorial, política y cultural de los 67 condados del Estado de Pensilvania a través de 6 épocas históricas.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

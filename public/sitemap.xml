@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+>
+  <!-- Primary Landing & Interactive Atlas (US English & US Spanish) -->
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/</loc>
+    <xhtml:link
+      rel="alternate"
+      hreflang="en-US"
+      href="https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?lang=en"
+    />
+    <xhtml:link
+      rel="alternate"
+      hreflang="es-US"
+      href="https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?lang=es"
+    />
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Historical Eras & Territorial Views -->
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?era=1681</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?era=1776</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?era=1861</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?era=1870</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?era=present</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Educational & Outreach Modules -->
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?view=phmc-markers</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?view=demographics</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/?view=classroom-mode</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+</urlset>

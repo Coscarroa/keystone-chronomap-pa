@@ -1,0 +1,153 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #09111E;
+    color: #F8FAFC;
+    font-family: var(--font-sans);
+  }
+
+  /* Smartboard Classroom Projection Mode (+18% typography scale) */
+  html.smartboard-scale {
+    font-size: 118%;
+  }
+}
+
+/* Custom subtle scrollbars for American Civic Archive drawers */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(9, 17, 30, 0.7);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.65);
+}
+
+/* Native @media print rules for PDE Worksheet Generator & Comic Book Encyclopedia */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body,
+  #root,
+  .app-root-shell {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    width: 100% !important;
+    overflow: visible !important;
+    position: static !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10.5pt !important;
+    orphans: 4 !important;
+    widows: 4 !important;
+  }
+
+  p,
+  li,
+  blockquote,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  div,
+  section,
+  article {
+    orphans: 4 !important;
+    widows: 4 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only-worksheet,
+  .print-only-comic {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    orphans: 4 !important;
+    widows: 4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .comic-print-page {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    page-break-after: always;
+    break-after: page;
+    orphans: 4 !important;
+    widows: 4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .comic-print-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .print-only-worksheet div,
+  .print-only-worksheet section,
+  .print-only-worksheet article,
+  .print-only-worksheet figure,
+  .print-only-worksheet table,
+  .print-only-worksheet blockquote,
+  .print-only-worksheet p,
+  .print-only-worksheet img,
+  .print-only-comic .comic-print-page > div,
+  .print-only-comic section,
+  .print-only-comic article,
+  .print-only-comic figure,
+  .print-only-comic p,
+  .print-only-comic img,
+  .comic-panel-print-card,
+  .comic-print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+    orphans: 4 !important;
+    widows: 4 !important;
+  }
+}
+
+

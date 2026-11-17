@@ -1,0 +1,7 @@
+# Keystone ChronoMap — Interactive Historical, Demographic & Civic Atlas of Pennsylvania
+User-agent: *
+Allow: /
+
+# Sitemap Reference (Replace TU_DOMINIO_AQUI with your production domain if custom-hosted)
+Sitemap: https://TU_DOMINIO_AQUI/sitemap.xml
+Sitemap: https://ais-pre-fhpafyrqoimr2pemggvzum-162502178501.us-east5.run.app/sitemap.xml

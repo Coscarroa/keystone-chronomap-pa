@@ -1,0 +1,21 @@
+{
+  "name": "Keystone ChronoMap — Pennsylvania Historical & Civic Atlas",
+  "short_name": "Keystone Atlas",
+  "description": "Explore Pennsylvania's 67 counties from 1681 to today. Interactive historical maps, PHMC markers, census demographics, bilingual audio guide (EN/ES), and PDE-aligned classroom tools.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#09111E",
+  "theme_color": "#09111E",
+  "lang": "en-US",
+  "categories": ["education", "reference", "navigation", "books"],
+  "icons": [
+    {
+      "src": "/keystone-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
