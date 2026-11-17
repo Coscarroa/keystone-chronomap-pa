@@ -166,8 +166,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1681',
     titleEn: 'Royal Charter of King Charles II to William Penn',
     titleEs: 'Carta Real de Carlos II a William Penn ("Sylvania")',
-    shortTitleEn: 'Royal Charter (1681)',
-    shortTitleEs: 'Carta Real (1681)',
+    shortTitleEn: 'Royal Charter',
+    shortTitleEs: 'Carta Real',
     summaryEn:
       'King Charles II granted Quaker thinker William Penn 45,000 square miles in North America to settle a royal debt owed to Admiral Sir William Penn, naming the province Pennsylvania.',
     summaryEs:
@@ -235,8 +235,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Continental Congress & Declaration of Independence',
     titleEs: 'Congreso Continental y Declaración de Independencia en Filadelfia',
-    shortTitleEn: 'Declaration (1776)',
-    shortTitleEs: 'Independencia (1776)',
+    shortTitleEn: 'Declaration of Independence',
+    shortTitleEs: 'Independencia',
     summaryEn:
       'Meeting inside the Pennsylvania State House (Independence Hall) in Philadelphia, the Second Continental Congress adopted the Declaration of Independence, making Pennsylvania the cradle of the American Republic.',
     summaryEs:
@@ -258,7 +258,7 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Proprietary Regime Ends: Radical PA Constitution of 1776',
     titleEs: 'Fin del Régimen Propietario y Constitución Radical de 1776',
-    shortTitleEn: 'Commonwealth Born (1776)',
+    shortTitleEn: 'Commonwealth Born',
     shortTitleEs: 'Nace la Mancomunidad',
     summaryEn:
       'Chaired by Benjamin Franklin, Pennsylvania ended the Penn family’s proprietary rule, establishing the "Commonwealth of Pennsylvania" with a unicameral assembly and abolishing property requirements for voting.',
@@ -281,8 +281,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Continental Army Winter Encampment at Valley Forge',
     titleEs: 'Campamento de Invierno del Ejército Continental en Valley Forge',
-    shortTitleEn: 'Valley Forge (1777)',
-    shortTitleEs: 'Valley Forge (1777)',
+    shortTitleEn: 'Valley Forge',
+    shortTitleEs: 'Valley Forge',
     summaryEn:
       'General George Washington and 12,000 Continental soldiers endured a brutal winter at Valley Forge while Baron von Steuben forged them into a professional army.',
     summaryEs:
@@ -328,7 +328,7 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Whiskey Rebellion in Western Pennsylvania',
     titleEs: 'Rebelión del Whiskey en el Oeste de Pensilvania',
-    shortTitleEn: 'Whiskey Rebellion (1794)',
+    shortTitleEn: 'Whiskey Rebellion',
     shortTitleEs: 'Rebelión del Whiskey',
     summaryEn:
       'Frontier farmers in Washington, Allegheny, Fayette, and Westmoreland counties rose against Alexander Hamilton’s federal excise tax on distilled spirits; President Washington led 13,000 militia across the Alleghenies.',
@@ -351,8 +351,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1861',
     titleEn: 'Battle of Gettysburg & Lincoln’s Gettysburg Address',
     titleEs: 'Batalla de Gettysburg y Discurso de Abraham Lincoln',
-    shortTitleEn: 'Gettysburg (1863)',
-    shortTitleEs: 'Gettysburg (1863)',
+    shortTitleEn: 'Battle of Gettysburg',
+    shortTitleEs: 'Batalla de Gettysburg',
     summaryEn:
       'Union forces under Pennsylvanian General George Gordon Meade repelled Robert E. Lee’s Confederate invasion in Adams County. Four months later, President Lincoln delivered the Gettysburg Address.',
     summaryEs:
@@ -374,7 +374,7 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: 'present',
     titleEn: 'Evolution of Pennsylvania State Constitutions (1790–1968)',
     titleEs: 'Reformas Constitucionales de Pensilvania (1790, 1838, 1874 y 1968)',
-    shortTitleEn: 'PA Constitutions (1968)',
+    shortTitleEn: 'PA Constitutions',
     shortTitleEs: 'Constituciones Estatales',
     summaryEn:
       'Pennsylvania evolved through five constitutions: 1776 (unicameral revolutionary), 1790 (bicameral General Assembly & Governor), 1838 (popular election of judges), 1874 (Gilded Age anti-monopoly checks), and 1968 (modern home rule & unified judiciary).',
@@ -401,8 +401,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1681',
     titleEn: 'William Penn’s 3 Original Counties: Philadelphia, Bucks & Chester',
     titleEs: 'Los 3 Condados Originales de Penn: Philadelphia, Bucks y Chester',
-    shortTitleEn: '3 Original Counties (1682)',
-    shortTitleEs: '3 Condados Originales (1682)',
+    shortTitleEn: '3 Original Counties',
+    shortTitleEs: '3 Condados Originales',
     summaryEn:
       'In 1682, William Penn organized the colonized southeast along the Delaware River into three foundational counties—Philadelphia, Bucks, and Chester—from which all 67 modern counties would eventually be carved.',
     summaryEs:
@@ -425,8 +425,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1681',
     titleEn: 'Foundation of Philadelphia (Thomas Holme’s Grid Plan)',
     titleEs: 'Fundación de Filadelfia (Plano Ortogonal de Thomas Holme)',
-    shortTitleEn: 'Philadelphia (1682)',
-    shortTitleEs: 'Filadelfia (1682)',
+    shortTitleEn: 'Philadelphia Grid',
+    shortTitleEs: 'Plano de Filadelfia',
     summaryEn:
       'Surveyed by Thomas Holme between the Delaware and Schuylkill rivers, Philadelphia was designed as a " Greene Country Towne" with five public squares and an orthogonal grid that inspired American urban planning.',
     summaryEs:
@@ -448,8 +448,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1681',
     titleEn: 'Foundation of Lancaster (1729) & York (1741) in the Susquehanna Valley',
     titleEs: 'Fundación de Lancaster (1729) y York (1741) en el Valle del Susquehanna',
-    shortTitleEn: 'Lancaster & York (1729)',
-    shortTitleEs: 'Lancaster y York (1729)',
+    shortTitleEn: 'Lancaster & York',
+    shortTitleEs: 'Lancaster y York',
     summaryEn:
       'Lancaster (4th county, 1729) became the largest inland town in the Thirteen Colonies and hub of Pennsylvania Dutch agriculture and the Conestoga wagon; York (5th county, 1741) was the first town west of the Susquehanna.',
     summaryEs:
@@ -494,8 +494,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Foundation of Pittsburgh at the Golden Triangle',
     titleEs: 'Fundación de Pittsburgh en el Triángulo Dorado de los Tres Ríos',
-    shortTitleEn: 'Pittsburgh (1758)',
-    shortTitleEs: 'Pittsburgh (1758)',
+    shortTitleEn: 'Pittsburgh Founded',
+    shortTitleEs: 'Fundación de Pittsburgh',
     summaryEn:
       'Founded where the Allegheny and Monongahela rivers join to form the Ohio River, Pittsburgh grew from Fort Pitt into the "Gateway to the West" and the steel capital of the world.',
     summaryEs:
@@ -517,8 +517,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Survey of the Mason–Dixon Line (Pennsylvania–Maryland Dispute)',
     titleEs: 'Trazado de la Línea Mason-Dixon (Resolución con Maryland)',
-    shortTitleEn: 'Mason-Dixon Line (1767)',
-    shortTitleEs: 'Línea Mason-Dixon (1767)',
+    shortTitleEn: 'Mason-Dixon Line',
+    shortTitleEs: 'Línea Mason-Dixon',
     summaryEn:
       'English astronomers Charles Mason and Jeremiah Dixon surveyed the 233-mile southern boundary at 39°43′ N to end the 80-year border conflict between the Penn family of Pennsylvania and the Calvert family of Maryland.',
     summaryEs:
@@ -541,7 +541,7 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     titleEn: 'Decree of Trenton: Resolution of the Yankee–Pennamite Wars',
     titleEs: 'Decreto de Trenton: Fin de la Disputa del Valle de Wyoming con Connecticut',
     shortTitleEn: 'Wyoming Valley Dispute',
-    shortTitleEs: 'Disputa de Wyoming (1782)',
+    shortTitleEs: 'Disputa de Wyoming',
     summaryEn:
       'Connecticut claimed the entire northern third of Pennsylvania under its sea-to-sea charter, sparking the armed Yankee-Pennamite Wars in the Wyoming Valley. The federal Decree of Trenton awarded sovereignty to Pennsylvania.',
     summaryEs:
@@ -563,8 +563,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Foundation of Harrisburg & Designation as State Capital (1812)',
     titleEs: 'Fundación de Harrisburg y Designación como Capital Estatal (1812)',
-    shortTitleEn: 'Harrisburg Capital (1785)',
-    shortTitleEs: 'Capital Harrisburg (1785)',
+    shortTitleEn: 'Harrisburg Capital',
+    shortTitleEs: 'Capital Harrisburg',
     summaryEn:
       'Laid out by John Harris Jr. along the Susquehanna River in newly created Dauphin County (1785), Harrisburg became the permanent State Capital of Pennsylvania in October 1812 due to its central location.',
     summaryEs:
@@ -586,7 +586,7 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'Purchase of the Erie Triangle (1792) & Foundation of Erie (1795)',
     titleEs: 'Compra del Triángulo de Erie (1792) y Fundación del Puerto de Erie (1795)',
-    shortTitleEn: 'Erie Triangle & Port (1792)',
+    shortTitleEn: 'Erie Triangle & Port',
     shortTitleEs: 'Triángulo y Puerto de Erie',
     summaryEn:
       'Pennsylvania purchased the 202,187-acre Erie Triangle from the U.S. government for $151,640.25 ($0.75/acre) in 1792 and surveyed the port city of Erie in 1795 on Presque Isle Bay.',
@@ -609,8 +609,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1861',
     titleEn: 'Foundation of Scranton: Anthracite & Iron Capital (1856)',
     titleEs: 'Fundación de Scranton: Capital de la Antracita y el Tranvía Eléctrico (1856)',
-    shortTitleEn: 'Scranton (1856)',
-    shortTitleEs: 'Scranton (1856)',
+    shortTitleEn: 'Scranton Electric City',
+    shortTitleEs: 'Scranton Ciudad Eléctrica',
     summaryEn:
       'Founded by the Scranton brothers around the Lackawanna Iron & Coal Company blast furnaces, Scranton became the "Electric City" in 1886 after inaugurating the first electric streetcar system in the United States.',
     summaryEs:
@@ -660,8 +660,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1776',
     titleEn: 'First Gradual Abolition of Slavery Act in the United States',
     titleEs: 'Primera Ley de Abolición Gradual de la Esclavitud en EE. UU. (1780)',
-    shortTitleEn: 'Gradual Abolition (1780)',
-    shortTitleEs: 'Abolición de 1780',
+    shortTitleEn: 'Gradual Abolition',
+    shortTitleEs: 'Abolición Gradual',
     summaryEn:
       'Enacted by the Pennsylvania General Assembly on March 1, 1780 amidst the Revolutionary War, it was the first legislative abolition law in the Western Hemisphere, making Pennsylvania a beacon of the Underground Railroad.',
     summaryEs:
@@ -688,14 +688,14 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     id: 'stat-census-growth-1790-present',
     year: 1790,
     dateLabelEn: '1790 – Present (Decennial)',
-    dateLabelEs: '1790 – Actualidad (Decenal)',
+    dateLabelEs: '1790 – Presente (Decenal)',
     category: 'statistical',
     subcategory: 'demographic_evolution',
     eraId: 'present',
     titleEn: 'Pennsylvania Decennial Population Growth (434k to 13.0 Million)',
-    titleEs: 'Evolución Demográfica de Pensilvania (1790–Actualidad: 434 mil a 13 M)',
-    shortTitleEn: 'Census Series (1790–Now)',
-    shortTitleEs: 'Censos 1790–Actualidad',
+    titleEs: 'Evolución Demográfica de Pensilvania (1790–Presente: 434 mil a 13 M)',
+    shortTitleEn: 'Census Series',
+    shortTitleEs: 'Serie Censal',
     summaryEn:
       'From 434,373 residents in the First U.S. Census of 1790, Pennsylvania surged through European immigration to its coal mines and steel mills (1880–1920) and the Great Migration, reaching 13.0 million residents today.',
     summaryEs:
@@ -729,8 +729,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1861',
     titleEn: 'Free Public School Act of 1834 (Thaddeus Stevens’ Defense)',
     titleEs: 'Ley de Escuelas Públicas Gratuitas de 1834 (Defensa de Thaddeus Stevens)',
-    shortTitleEn: 'Free Schools Act (1834)',
-    shortTitleEs: 'Escuelas Públicas (1834)',
+    shortTitleEn: 'Free Schools Act',
+    shortTitleEs: 'Escuelas Públicas',
     summaryEn:
       'Signed by Governor George Wolf and heroically defended against repeal in 1835 by Representative Thaddeus Stevens, this law created universal, tax-supported public education across all Pennsylvania counties.',
     summaryEs:
@@ -763,7 +763,7 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1870',
     titleEn: 'Titusville Oil Boom (1859), Anthracite Peak & Pittsburgh Steel',
     titleEs: 'Auge del Petróleo (1859), Carbón Antracita y Acero de Pittsburgh',
-    shortTitleEn: 'Coal, Oil & Steel Boom',
+    shortTitleEn: 'Coal, Oil & Steel',
     shortTitleEs: 'Carbón, Petróleo y Acero',
     summaryEn:
       'Edwin Drake’s 1859 Titusville well birthed the global petroleum industry; northeastern mines produced 99% of America’s anthracite coal (peaking at 100 million tons in 1917); and Pittsburgh produced 60% of U.S. steel.',
@@ -798,8 +798,8 @@ export const CHRONOLOGY_MILESTONES_DATA: ChronologyMilestoneItem[] = [
     eraId: '1870',
     titleEn: 'Justice Bell Tour (67 Counties) & Ratification of the 19th Amendment',
     titleEs: 'Gira de la Campana de la Justicia (67 Condados) y Sufragio Femenino',
-    shortTitleEn: 'Women’s Suffrage (1915)',
-    shortTitleEs: 'Sufragio Femenino (1915)',
+    shortTitleEn: "Women's Suffrage",
+    shortTitleEs: 'Sufragio Femenino',
     summaryEn:
       'Suffragist Katharine Wentworth Ruschenberger commissioned the 2,000-pound bronze "Justice Bell" with its clapper chained silent until women won the vote, touring 5,000 miles across all 67 Pennsylvania counties in 1915.',
     summaryEs:

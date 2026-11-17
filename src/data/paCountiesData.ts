@@ -174,7 +174,7 @@ export const HISTORICAL_ERAS: HistoricalEra[] = [
   },
   {
     id: 'present',
-    yearLabel: 'Actualidad',
+    yearLabel: 'Presente',
     cutoffYear: 2026,
     title: 'División Política Moderna (67 Condados)',
     subtitle: 'Síntesis Contemporánea · Tecnología, Salud, Agroindustria y Patrimonio Histórico',

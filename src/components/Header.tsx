@@ -5,7 +5,6 @@ import {
   Menu,
   BookOpen,
   ArrowLeftRight,
-  Shield,
   Check,
   Heart,
 } from 'lucide-react';
@@ -69,9 +68,11 @@ interface HeaderProps {
   onSelectPhmcCategory: (cat: PhmcCategory | 'all') => void;
   selectedPhmcMarker: PhmcMarkerRecord | null;
   onSelectPhmcMarker: (marker: PhmcMarkerRecord) => void;
-  // Phase 7/8: Support Modal & Regions Legend Toggle
+  // Phase 7/8: Support Modal, Atlas Index, Creator Contact & Regions Legend Toggle
   onOpenSupportModal: () => void;
   onOpenAboutOutreachModal: () => void;
+  onOpenAtlasIndexModal: () => void;
+  onOpenContactModal: () => void;
   onOpenComicEncyclopedia: () => void;
   isLegendOpen: boolean;
   onToggleLegendOpen: () => void;
@@ -93,6 +94,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectPhmcMarker,
   onOpenSupportModal,
   onOpenAboutOutreachModal,
+  onOpenAtlasIndexModal,
+  onOpenContactModal,
   onOpenComicEncyclopedia,
 }) => {
   const { language, setLanguage, t } = useTranslation();
@@ -197,51 +200,43 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-14 z-40 bg-[#0F1C30]/88 backdrop-blur-xl border-b border-slate-700/60 shadow-[0_8px_32px_rgba(0,0,0,0.65)] px-3 sm:px-5 flex items-center justify-between gap-3 no-print">
-      {/* ZONE 1 (LEFT): Circular Brand Emblem + Title */}
-      <div className="flex items-center gap-2.5 min-w-0 shrink-0">
-        <button
-          type="button"
+    <header className="fixed top-0 left-0 right-0 h-16 md:h-[68px] z-40 bg-[#0F1C30]/88 backdrop-blur-xl border-b border-slate-700/60 shadow-[0_8px_32px_rgba(0,0,0,0.65)] px-3 sm:px-5 flex items-center justify-between gap-3 no-print">
+      {/* ZONE 1 (LEFT): Official Circular Brand Emblem + Title & Bilingual Subtitle */}
+      <div className="flex items-center gap-2.5 sm:min-w-[260px] md:min-w-[310px] shrink-0">
+        <img
+          src="/logo-keystone-chronomap.png"
+          alt="Keystone ChronoMap — Atlas Cartográfico Histórico de Pensilvania"
+          title={t.header.resetViewTitle}
+          onClick={() => {
+            setSearchQuery('');
+            onResetView();
+          }}
+          className="w-11 h-11 md:w-12 md:h-12 rounded-full object-cover shrink-0 ring-2 ring-[#D4AF37]/60 shadow-[0_0_15px_rgba(212,175,55,0.25)] hover:scale-105 transition-transform duration-300 cursor-pointer"
+        />
+
+        <div
           onClick={() => {
             setSearchQuery('');
             onResetView();
           }}
           title={t.header.resetViewTitle}
-          className="w-9 h-9 rounded-full bg-[#09111E] border-2 border-[#D4AF37]/80 flex items-center justify-center text-[#D4AF37] hover:bg-[#1E3A8A]/60 hover:border-[#F8FAFC] transition-all shrink-0 cursor-pointer shadow-md"
+          className="flex flex-col justify-center leading-tight cursor-pointer group"
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path
-              d="M6 3H18L20 9L16.5 21H7.5L4 9L6 3Z"
-              stroke="currentColor"
-              strokeWidth="1.7"
-              fill="rgba(29, 78, 216, 0.35)"
-            />
-            <polygon
-              points="12,7.5 13.2,10.2 16,10.5 13.9,12.4 14.5,15.2 12,13.7 9.5,15.2 10.1,12.4 8,10.5 10.8,10.2"
-              fill="#D4AF37"
-            />
-          </svg>
-        </button>
-
-        <div className="flex items-center gap-1.5 min-w-0">
-          <h1 className="font-serif text-base sm:text-lg font-bold tracking-tight text-[#F8FAFC] truncate">
+          <h1 className="font-serif text-lg md:text-xl font-bold text-[#F8FAFC] group-hover:text-[#D4AF37] transition-colors tracking-tight whitespace-nowrap">
             Keystone ChronoMap
           </h1>
-          <Shield className="w-3.5 h-3.5 text-[#D4AF37] hidden sm:inline shrink-0" />
+          <span className="text-[10px] sm:text-[11px] md:text-xs font-medium text-[#D4AF37] tracking-wide mt-0.5 whitespace-nowrap">
+            {language === 'es'
+              ? 'Atlas Cartográfico Histórico de Pensilvania'
+              : 'Historical Cartographic Atlas of Pennsylvania'}
+          </span>
         </div>
       </div>
 
       {/* ZONE 2 (CENTER): Universal Search Input (County, Seat, or Historical Site) */}
       <div
         ref={searchContainerRef}
-        className="relative flex-1 max-w-md mx-2"
+        className="relative w-64 md:w-80 mx-2 shrink-0"
       >
         <div className="relative flex items-center">
           <Search className="w-4 h-4 text-[#94A3B8] absolute left-3.5 pointer-events-none" />
@@ -254,7 +249,11 @@ export const Header: React.FC<HeaderProps> = ({
               setIsSearchOpen(true);
             }}
             onKeyDown={handleKeyDown}
-            placeholder={t.header.searchPlaceholder}
+            placeholder={
+              language === 'en'
+                ? 'Search county or site...'
+                : 'Buscar condado o sitio...'
+            }
             aria-label={t.header.searchAriaLabel}
             className="w-full pl-9 pr-8 py-1.5 text-xs sm:text-sm bg-[#09111E]/90 border border-slate-700/70 rounded-full text-[#F8FAFC] placeholder-[#94A3B8] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/40 transition-all"
           />
@@ -477,6 +476,22 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               <div className="p-2 space-y-1">
+                {/* Featured Item: Atlas Index & Official Sources */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenAtlasIndexModal();
+                    setIsMainMenuOpen(false);
+                  }}
+                  title={t.header.atlasIndexTitle}
+                  className="w-full text-left px-3 py-2 rounded-xl bg-[#1D4ED8]/35 hover:bg-[#1D4ED8]/75 border border-[#D4AF37]/60 transition-colors flex items-center justify-between gap-2 text-xs font-bold text-[#F8FAFC] cursor-pointer shadow-xs"
+                >
+                  <span>{t.header.atlasIndexBtn}</span>
+                  <span className="font-mono text-[10px] text-[#D4AF37]">
+                    ↗
+                  </span>
+                </button>
+
                 {/* Item 1: 67-County Archive Index */}
                 <button
                   type="button"
@@ -566,7 +581,20 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>{t.header.aboutOutreachBtn}</span>
                 </button>
 
-                {/* Item 7: Support Educational Project */}
+                {/* Item 7: Creator Profile & Direct Contact (Cesil Roa) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenContactModal();
+                    setIsMainMenuOpen(false);
+                  }}
+                  title={t.header.contactCreatorTitle}
+                  className="w-full text-left px-3 py-2 rounded-xl bg-[#09111E]/85 hover:bg-[#1E3A8A]/65 border border-slate-700 hover:border-[#D4AF37]/60 transition-colors flex items-center justify-between gap-2 text-xs font-semibold text-[#F8FAFC] cursor-pointer"
+                >
+                  <span>{t.header.contactCreatorBtn}</span>
+                </button>
+
+                {/* Item 8: Support Educational Project */}
                 <button
                   type="button"
                   onClick={() => {

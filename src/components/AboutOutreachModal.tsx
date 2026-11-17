@@ -79,20 +79,27 @@ export const AboutOutreachModal: React.FC<AboutOutreachModalProps> = ({
       <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#0F1C30]/95 backdrop-blur-2xl border border-[#D4AF37]/65 rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.88)] text-[#F8FAFC] divide-y divide-slate-800/90">
         {/* Top Institutional Header */}
         <div className="p-5 sm:p-6 bg-gradient-to-r from-[#09111E] via-[#0F1C30] to-[#1E3A8A]/40 flex items-start justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#1E3A8A]/70 border border-[#D4AF37]/60 text-[10px] font-mono uppercase tracking-[0.18em] text-[#D4AF37] font-semibold">
-              <Landmark className="w-3 h-3" />
-              <span>{t.outreach.modalKicker}</span>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            <img
+              src="/logo-keystone-chronomap.png"
+              alt="Keystone ChronoMap — Atlas Cartográfico Histórico de Pensilvania"
+              className="w-20 h-20 rounded-full object-cover ring-2 ring-[#D4AF37] shadow-xl mx-auto sm:mx-0 shrink-0"
+            />
+            <div className="space-y-1.5 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#1E3A8A]/70 border border-[#D4AF37]/60 text-[10px] font-mono uppercase tracking-[0.18em] text-[#D4AF37] font-semibold">
+                <Landmark className="w-3 h-3" />
+                <span>{t.outreach.modalKicker}</span>
+              </div>
+              <h2
+                id="about-outreach-title"
+                className="font-serif text-xl sm:text-2xl font-bold text-[#F8FAFC] leading-tight"
+              >
+                {t.outreach.modalTitle}
+              </h2>
+              <p className="text-xs sm:text-sm text-[#94A3B8] max-w-3xl leading-relaxed">
+                {t.outreach.modalSubtitle}
+              </p>
             </div>
-            <h2
-              id="about-outreach-title"
-              className="font-serif text-xl sm:text-2xl font-bold text-[#F8FAFC] leading-tight"
-            >
-              {t.outreach.modalTitle}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#94A3B8] max-w-3xl leading-relaxed">
-              {t.outreach.modalSubtitle}
-            </p>
           </div>
 
           <button

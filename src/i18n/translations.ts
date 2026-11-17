@@ -22,7 +22,7 @@ export const UI_TRANSLATIONS = {
   en: {
     header: {
       commonwealthSubtitle: 'COMMONWEALTH OF PENNSYLVANIA',
-      atlasSubtitle: 'Historical Cartographic Atlas',
+      atlasSubtitle: 'Historical Cartographic Atlas of Pennsylvania',
       countiesInEra: (count: number) => `${count} of 67 counties`,
       inEraConnector: 'in era',
       compareBtn: '⏳ Compare: Before vs. Today',
@@ -63,8 +63,11 @@ export const UI_TRANSLATIONS = {
       vintageMapsBtn: '🗺️ Vintage Maps (Overlays)',
       overlayActiveBadge: 'Overlay Active',
       leadersBtn: '🏛️ Leaders & Governors',
-      atlasGuideBtn: '📖 Atlas Guide',
+      atlasGuideBtn: '🧭 Atlas Guide',
       atlasGuideTitle: 'Open Interactive 5-Step Welcome Guide',
+      atlasIndexBtn: '📑 Atlas Index & Sources',
+      atlasIndexTitle:
+        'Interactive Site Map, Direct Module Shortcuts & Verified Archival Sources',
       aboutOutreachBtn: '🏛️ About & PA Community',
       aboutOutreachTitle:
         'Institutional Presentation & Pennsylvania Community Outreach',
@@ -76,6 +79,9 @@ export const UI_TRANSLATIONS = {
         'Toggle Classroom Mode, Smartboard Whiteboard, Primary Sources, PDE Worksheets & Trivia',
       languageSwitcherLabel: 'Switch application language (EN / ES)',
       supportCompactBtn: '♥ Support',
+      contactCreatorBtn: '👤 Creator & Contact (Cesil Roa)',
+      contactCreatorTitle:
+        'About Creator Cesil Roa — LinkedIn Profile & Direct Contact',
     },
     timeline: {
       eraPrefix: 'Era',
@@ -89,9 +95,9 @@ export const UI_TRANSLATIONS = {
       chronologyRange: '1681 – Present',
       hideChronicle: 'Hide era chronicle',
       showChronicle: 'Show era chronicle',
-      catPolitical: '🏛️ Political & Historical',
-      catGeographic: '🗺️ Geographic & Territorial',
-      catStatistical: '📈 Statistical & Social',
+      catPolitical: '🏛️ Political',
+      catGeographic: '🗺️ Geographic',
+      catStatistical: '📈 Statistical',
       subAll: 'All Milestones',
       locateOnMapBtn: '📍 Locate on Map',
       inspectCountyBtn: (cName: string) => `Inspect ${cName} County`,
@@ -99,6 +105,10 @@ export const UI_TRANSLATIONS = {
       timeSeriesHeader: 'Historical Statistical Evolution',
       eraFilterPrefix: 'Map Era:',
       closeDrawerAria: 'Close chronological milestone dossier',
+      scrollLeftAria: 'Scroll milestones left',
+      scrollRightAria: 'Scroll milestones right',
+      collapseTimelineAria: 'Collapse chronology milestones row',
+      expandTimelineAria: 'Expand chronology milestones row',
       eraShortLabels: {
         '1681': "William Penn's Charter",
         '1776': 'American Revolution',
@@ -316,13 +326,13 @@ export const UI_TRANSLATIONS = {
     welcomeGuide: {
       kicker: (stepNum: string) =>
         `INTERACTIVE ATLAS GUIDE · STEP ${stepNum} OF 05`,
-      title: 'Exploration Guide — Keystone ChronoMap',
+      title: 'Interactive Welcome Guide — Keystone ChronoMap',
       stepLabel: (num: string) => `STEP ${num}`,
-      highlightsHeader: 'Key Interactions in this Module:',
-      skipBtn: 'Skip tutorial and go to map',
+      highlightsHeader: 'Key Features & Interactions:',
+      skipBtn: 'Skip guide and go to map',
       prevBtn: 'Previous',
-      nextBtn: 'Next step',
-      startBtn: 'Start Exploring the Atlas',
+      nextBtn: 'Next',
+      startBtn: 'Start Exploring!',
     },
     teacherToolbar: {
       kicker: 'PDE CLASSROOM MODE',
@@ -577,11 +587,49 @@ export const UI_TRANSLATIONS = {
         `🚌 Added "${title}" to My Field Trips (${count}/${max})`,
       openTripsBtn: 'View Itinerary',
     },
+    footer: {
+      ariaLabel: 'Legal information and footer',
+      navAriaLabel: 'Legal links and contact',
+      copyrightLine:
+        '© 2026 Keystone ChronoMap · Independent Educational & Historical Atlas of Pennsylvania.',
+      termsLink: 'Terms of Use',
+      privacyLink: 'Privacy Policy',
+      contactLink: 'Contact',
+    },
+    creatorContact: {
+      kicker: 'PLATFORM ARCHITECT & CREATOR',
+      headline:
+        'Senior Business Systems Analyst | Requirements & Process Improvement',
+      location: 'Pennsylvania, United States',
+      availabilityBadge: 'Open to Remote & Hybrid Opportunities in the US',
+      bioHeader: 'Professional Summary & Mission',
+      bioSummary:
+        "Senior Business Systems Analyst with 10+ years of experience bridging business needs and technology solutions through systems analysis, requirements documentation, process automation, and data reporting. Leveraging his expertise in structuring complex information and translating requirements into practical software, he created Keystone ChronoMap as an open-access educational platform for Pennsylvania's communities.",
+      skillsHeader: 'Core Specialties & Technical Stack',
+      coreSkills: [
+        'Systems Analysis',
+        'Requirements Management',
+        'Process Improvement',
+        'SQL & Power BI',
+        'SharePoint / M365',
+        'Agile / Azure DevOps',
+        'Bilingual (EN/ES)',
+      ],
+      linkedinBtn: 'Connect on LinkedIn',
+      directEmailLabel: 'Direct Email',
+      copyEmailBtn: 'Copy Email',
+      copiedBadge: '✓ Copied!',
+      emailActionBtn: 'Email',
+      sendEmailTitle: 'Send direct email to cesil.roa@gmail.com',
+      supportLink: 'Support this open educational project',
+      closeBtn: 'Close',
+      closeAria: 'Close creator contact modal',
+    },
   },
   es: {
     header: {
       commonwealthSubtitle: 'COMMONWEALTH OF PENNSYLVANIA',
-      atlasSubtitle: 'Atlas Cartográfico Histórico',
+      atlasSubtitle: 'Atlas Cartográfico Histórico de Pensilvania',
       countiesInEra: (count: number) => `${count} de 67 condados`,
       inEraConnector: 'en época',
       compareBtn: '⏳ Comparar: Antes vs. Hoy',
@@ -624,8 +672,11 @@ export const UI_TRANSLATIONS = {
       vintageMapsBtn: '🗺️ Mapas Antiguos (Superposición)',
       overlayActiveBadge: 'Superpuesto',
       leadersBtn: '🏛️ Líderes y Gobernadores',
-      atlasGuideBtn: '📖 Guía del Atlas',
+      atlasGuideBtn: '🧭 Guía del Atlas',
       atlasGuideTitle: 'Abrir Manual Interactivo de Bienvenida (5 pasos)',
+      atlasIndexBtn: '📑 Índice del Atlas y Fuentes',
+      atlasIndexTitle:
+        'Mapa del Sitio Interactivo, Accesos Directos y Directorio de Fuentes Oficiales',
       aboutOutreachBtn: '🏛️ Acerca y Comunidad PA',
       aboutOutreachTitle:
         'Presentación Institucional y Difusión Comunitaria en Pensilvania',
@@ -637,6 +688,9 @@ export const UI_TRANSLATIONS = {
         'Activar o desactivar herramientas de aula, pizarra digital Smartboard, fuentes primarias, hojas de trabajo PDE y trivia',
       languageSwitcherLabel: 'Cambiar idioma de la aplicación (EN / ES)',
       supportCompactBtn: '♥ Apoyar',
+      contactCreatorBtn: '👤 Creador y Contacto (Cesil Roa)',
+      contactCreatorTitle:
+        'Acerca del Creador Cesil Roa — Perfil de LinkedIn y Contacto Directo',
     },
     timeline: {
       eraPrefix: 'Época',
@@ -650,9 +704,9 @@ export const UI_TRANSLATIONS = {
       chronologyRange: '1681 – Presente',
       hideChronicle: 'Ocultar crónica de la época',
       showChronicle: 'Mostrar crónica de la época',
-      catPolitical: '🏛️ Político e Histórico',
-      catGeographic: '🗺️ Geográfico y Territorial',
-      catStatistical: '📈 Estadístico y Social',
+      catPolitical: '🏛️ Político',
+      catGeographic: '🗺️ Geográfico',
+      catStatistical: '📈 Estadístico',
       subAll: 'Todos los Hitos',
       locateOnMapBtn: '📍 Ubicar en el Mapa',
       inspectCountyBtn: (cName: string) => `Ver Condado de ${cName}`,
@@ -660,6 +714,10 @@ export const UI_TRANSLATIONS = {
       timeSeriesHeader: 'Evolución Estadística de la Etapa',
       eraFilterPrefix: 'Época del Mapa:',
       closeDrawerAria: 'Cerrar ficha cronológica',
+      scrollLeftAria: 'Desplazar hitos a la izquierda',
+      scrollRightAria: 'Desplazar hitos a la derecha',
+      collapseTimelineAria: 'Minimizar fila de hitos cronológicos',
+      expandTimelineAria: 'Expandir fila de hitos cronológicos',
       eraShortLabels: {
         '1681': 'Carta de William Penn',
         '1776': 'Revolución Americana',
@@ -878,13 +936,13 @@ export const UI_TRANSLATIONS = {
     welcomeGuide: {
       kicker: (stepNum: string) =>
         `MANUAL INTERACTIVO DEL ATLAS · PASO ${stepNum} DE 05`,
-      title: 'Guía de Exploración — Keystone ChronoMap',
+      title: 'Manual Interactivo de Bienvenida — Keystone ChronoMap',
       stepLabel: (num: string) => `PASO ${num}`,
-      highlightsHeader: 'Claves de Interacción en este Módulo:',
-      skipBtn: 'Omitir tutorial e ir al mapa',
+      highlightsHeader: 'Funciones Clave en este Paso:',
+      skipBtn: 'Omitir guía e ir al mapa',
       prevBtn: 'Anterior',
-      nextBtn: 'Siguiente paso',
-      startBtn: 'Comenzar a Explorar el Atlas',
+      nextBtn: 'Siguiente',
+      startBtn: '¡Comenzar Exploración!',
     },
     teacherToolbar: {
       kicker: 'PDE CLASSROOM MODE',
@@ -1141,6 +1199,45 @@ export const UI_TRANSLATIONS = {
       stopAddedToast: (title: string, count: number, max: number) =>
         `🚌 "${title}" añadido a Mi Excursión (${count}/${max})`,
       openTripsBtn: 'Ver Ruta',
+    },
+    footer: {
+      ariaLabel: 'Información legal y pie de página',
+      navAriaLabel: 'Enlaces legales y contacto',
+      copyrightLine:
+        '© 2026 Keystone ChronoMap · Atlas Educativo e Histórico Independiente de Pensilvania.',
+      termsLink: 'Términos de Uso',
+      privacyLink: 'Política de Privacidad',
+      contactLink: 'Contacto',
+    },
+    creatorContact: {
+      kicker: 'ARQUITECTO Y CREADOR DE LA PLATAFORMA',
+      headline:
+        'Analista Senior de Sistemas de Negocio | Gestión de Requerimientos y Mejora de Procesos',
+      location: 'Pensilvania, Estados Unidos',
+      availabilityBadge:
+        'Disponible para Oportunidades Remotas e Híbridas en EE. UU.',
+      bioHeader: 'Resumen Profesional y Misión',
+      bioSummary:
+        'Analista Senior de Sistemas de Negocio con más de 10 años de experiencia conectando necesidades estratégicas con soluciones tecnológicas mediante análisis de sistemas, documentación de requerimientos, automatización de procesos y visualización de datos. Aplicando su experiencia en estructurar información compleja y transformarla en herramientas prácticas, creó Keystone ChronoMap como un atlas educativo de acceso abierto para las comunidades de Pensilvania.',
+      skillsHeader: 'Especialidades Clave y Stack Técnico',
+      coreSkills: [
+        'Systems Analysis',
+        'Requirements Management',
+        'Process Improvement',
+        'SQL & Power BI',
+        'SharePoint / M365',
+        'Agile / Azure DevOps',
+        'Bilingual (EN/ES)',
+      ],
+      linkedinBtn: 'Conectar en LinkedIn',
+      directEmailLabel: 'Correo Directo',
+      copyEmailBtn: 'Copiar Correo',
+      copiedBadge: '✓ ¡Copiado!',
+      emailActionBtn: 'Escribir',
+      sendEmailTitle: 'Enviar correo directo a cesil.roa@gmail.com',
+      supportLink: 'Apoyar este proyecto educativo',
+      closeBtn: 'Cerrar',
+      closeAria: 'Cerrar ventana de contacto del creador',
     },
   },
 };
@@ -1445,7 +1542,7 @@ export function getLocalizedCountyDossier(
 export function getLocalizedEra(era: HistoricalEra, lang: AppLanguage) {
   if (lang === 'es') {
     return {
-      yearLabel: era.yearLabel,
+      yearLabel: era.id === 'present' ? 'Presente' : era.yearLabel,
       title: era.title,
       subtitle: era.subtitle,
       summary: era.summary,

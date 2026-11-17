@@ -38,9 +38,13 @@ import FieldTripBuilder, {
 } from './components/FieldTripBuilder';
 import SupportModal from './components/SupportModal';
 import AboutOutreachModal from './components/AboutOutreachModal';
+import AtlasIndexAndSourcesModal, {
+  DirectAtlasModuleId,
+} from './components/AtlasIndexAndSourcesModal';
+import CreatorContactModal from './components/CreatorContactModal';
 import KeystoneAIAssistant from './components/KeystoneAIAssistant';
+import Footer from './components/Footer';
 import {
-  LegalFooter,
   LegalModal,
   LegalModalType,
 } from './components/LegalFooterModals';
@@ -220,6 +224,10 @@ export default function App() {
   const [isSupportModalOpen, setIsSupportModalOpen] = useState<boolean>(false);
   const [isAboutOutreachOpen, setIsAboutOutreachOpen] =
     useState<boolean>(false);
+  const [isAtlasIndexModalOpen, setIsAtlasIndexModalOpen] =
+    useState<boolean>(false);
+  const [isCreatorContactOpen, setIsCreatorContactOpen] =
+    useState<boolean>(false);
   const [isComicEncyclopediaOpen, setIsComicEncyclopediaOpen] =
     useState<boolean>(false);
   const [encyclopediaInitialMode, setEncyclopediaInitialMode] = useState<
@@ -290,14 +298,21 @@ export default function App() {
       window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
   }, []);
 
-  // Auto-open Welcome Guide after 900ms only on first visit
+  // Auto-open Welcome Guide after 900ms only on first visit (unless a URL deep-link is active)
   useEffect(() => {
     let timer: number | undefined;
     try {
+      const params = new URLSearchParams(window.location.search);
+      const hasDeepLink = params.has('county') || params.has('module');
       const seen = localStorage.getItem(GUIDE_SEEN_STORAGE_KEY);
-      if (!seen) {
+      if (!seen && !hasDeepLink) {
         timer = window.setTimeout(() => {
           setIsWelcomeGuideOpen(true);
+          try {
+            localStorage.setItem(GUIDE_SEEN_STORAGE_KEY, 'true');
+          } catch {
+            // Ignore storage write errors
+          }
         }, 900);
       }
     } catch {
@@ -582,6 +597,128 @@ export default function App() {
     setResetTrigger((prev) => prev + 1);
   }, []);
 
+  /**
+   * Direct module launcher used by both `AtlasIndexAndSourcesModal` and URL deep-links (`?module=...`).
+   */
+  const handleLaunchAtlasModule = useCallback(
+    (moduleId: DirectAtlasModuleId) => {
+      switch (moduleId) {
+        case 'counties67':
+          setIsCompareMode(false);
+          setTurfScenario('none');
+          setActiveEra(HISTORICAL_ERAS[5]);
+          handleResetView();
+          break;
+        case 'territories1682':
+          setIsCompareMode(false);
+          setIsInfoPanelOpen(false);
+          setActiveLeftDrawer('territories');
+          setTurfScenario('1682');
+          setActiveEra(HISTORICAL_ERAS[0]);
+          break;
+        case 'territories1787':
+          setIsCompareMode(false);
+          setIsInfoPanelOpen(false);
+          setActiveLeftDrawer('territories');
+          setTurfScenario('1787');
+          setActiveEra(HISTORICAL_ERAS[1]);
+          break;
+        case 'compare':
+          setActiveLeftDrawer(null);
+          setIsInfoPanelOpen(false);
+          setIsCompareMode(true);
+          break;
+        case 'vintagemaps':
+          setIsMapsGalleryOpen(true);
+          break;
+        case 'encyclopedia':
+          setEncyclopediaInitialMode('2d_comics');
+          setIsComicEncyclopediaOpen(true);
+          break;
+        case '3dstage':
+          setEncyclopediaInitialMode('3d_stage');
+          setIsComicEncyclopediaOpen(true);
+          break;
+        case 'milestones':
+          setIsCompareMode(false);
+          setIsInfoPanelOpen(false);
+          setShowEventsLayer(true);
+          setActiveLeftDrawer('layers');
+          break;
+        case 'phmc':
+          setIsCompareMode(false);
+          setIsInfoPanelOpen(false);
+          setShowPhmcLayer(true);
+          setSelectedPhmcCategory('all');
+          setActiveLeftDrawer('layers');
+          break;
+        case 'leaders':
+          setIsLeadersModalOpen(true);
+          break;
+        case 'teacher':
+          setIsCompareMode(false);
+          setIsInfoPanelOpen(false);
+          setIsTeacherMode(true);
+          setActiveLeftDrawer('teacher');
+          break;
+        case 'ai':
+          setIsInfoPanelOpen(false);
+          setIsTeacherMode(false);
+          setActiveLeftDrawer('ai');
+          break;
+        case 'fieldtrips':
+          setIsInfoPanelOpen(false);
+          setIsTeacherMode(false);
+          setActiveLeftDrawer('trips');
+          break;
+        case 'guide':
+          setIsWelcomeGuideOpen(true);
+          break;
+        case 'support':
+          setIsSupportModalOpen(true);
+          break;
+        case 'outreach':
+          setIsAboutOutreachOpen(true);
+          break;
+        case 'catalog':
+          setIsCatalogOpen(true);
+          break;
+      }
+    },
+    [handleResetView]
+  );
+
+  // URLSearchParams deep-link reader (?county=Lackawanna or ?module=encyclopedia)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const countyParam = params.get('county')?.trim();
+      const moduleParam = params.get('module')?.trim().toLowerCase();
+
+      if (countyParam) {
+        const matchedCounty = ALL_COUNTIES_LIST.find(
+          (c) => c.name.toLowerCase() === countyParam.toLowerCase()
+        );
+        if (matchedCounty) {
+          setIsCompareMode(false);
+          handleSelectCounty(matchedCounty);
+        }
+      }
+
+      if (moduleParam) {
+        if (moduleParam === 'index' || moduleParam === 'sources') {
+          setIsAtlasIndexModalOpen(true);
+        } else if (moduleParam === 'contact' || moduleParam === 'creator') {
+          setIsCreatorContactOpen(true);
+        } else {
+          handleLaunchAtlasModule(moduleParam as DirectAtlasModuleId);
+        }
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+  }, [handleSelectCounty, handleLaunchAtlasModule]);
+
   return (
     <LanguageProvider>
       <div className="app-root-shell relative w-full h-screen overflow-hidden print:h-auto print:overflow-visible bg-[#09111E] text-[#F8FAFC]">
@@ -648,6 +785,8 @@ export default function App() {
             onSelectPhmcMarker={(marker) => handleSelectPhmcMarker(marker)}
             onOpenSupportModal={() => setIsSupportModalOpen(true)}
             onOpenAboutOutreachModal={() => setIsAboutOutreachOpen(true)}
+            onOpenAtlasIndexModal={() => setIsAtlasIndexModalOpen(true)}
+            onOpenContactModal={() => setIsCreatorContactOpen(true)}
             onOpenComicEncyclopedia={() => {
               setEncyclopediaInitialMode('2d_comics');
               setIsComicEncyclopediaOpen(true);
@@ -925,12 +1064,25 @@ export default function App() {
           <WelcomeGuideModal
             isOpen={isWelcomeGuideOpen}
             onClose={handleCloseWelcomeGuide}
-            onOpenCompareMode={() => setIsCompareMode(true)}
+            onOpenCompareMode={() => {
+              setActiveLeftDrawer(null);
+              setIsInfoPanelOpen(false);
+              setIsCompareMode(true);
+            }}
             onOpenMapsGallery={() => setIsMapsGalleryOpen(true)}
             onActivateTeacherMode={() => {
               setIsInfoPanelOpen(false);
               setIsTeacherMode(true);
               setActiveLeftDrawer('teacher');
+            }}
+            onOpenEncyclopedia={() => {
+              setEncyclopediaInitialMode('3d_stage');
+              setIsComicEncyclopediaOpen(true);
+            }}
+            onOpenAIGuide={() => {
+              setIsInfoPanelOpen(false);
+              setIsTeacherMode(false);
+              setActiveLeftDrawer('ai');
             }}
           />
 
@@ -969,6 +1121,17 @@ export default function App() {
               setActiveLeftDrawer('teacher');
             }}
             onOpenCountyCatalog={() => setIsCatalogOpen(true)}
+          />
+
+          {/* Interactive Site Map Index & Verified Archival Sources Directory Modal */}
+          <AtlasIndexAndSourcesModal
+            isOpen={isAtlasIndexModalOpen}
+            onClose={() => setIsAtlasIndexModalOpen(false)}
+            onLaunchModule={handleLaunchAtlasModule}
+            onSelectCounty={(county) => {
+              setIsCompareMode(false);
+              handleSelectCounty(county);
+            }}
           />
 
           {/* Phase 13 & 14: Lazy-Loaded Illustrated Cartoon Encyclopedia, 3D Historical Figures Stage & PDF Exporter */}
@@ -1068,9 +1231,17 @@ export default function App() {
             }}
           />
 
-          {/* Discreet & Responsive Institutional Footer Bar */}
-          <LegalFooter
+          {/* Minimalist Single-Line Bilingual Footer Bar */}
+          <Footer
             onOpenLegalModal={(type) => setActiveLegalModal(type)}
+            onOpenContactModal={() => setIsCreatorContactOpen(true)}
+          />
+
+          {/* Creator Profile & Direct Contact Modal (Cesil Roa) */}
+          <CreatorContactModal
+            isOpen={isCreatorContactOpen}
+            onClose={() => setIsCreatorContactOpen(false)}
+            onOpenSupportModal={() => setIsSupportModalOpen(true)}
           />
 
           {/* Legal Modals: Terms of Use & Official Disclaimer + Privacy Policy */}

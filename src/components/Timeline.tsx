@@ -1,7 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   ChevronUp,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Layers,
   MapPin,
@@ -55,6 +57,8 @@ export const Timeline: React.FC<TimelineProps> = ({
   const [isChronicleExpanded, setIsChronicleExpanded] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+
   const locActiveEra = useMemo(
     () => getLocalizedEra(activeEra, language),
     [activeEra, language]
@@ -66,6 +70,12 @@ export const Timeline: React.FC<TimelineProps> = ({
       (item) => item.category === activeCategory
     );
   }, [activeCategory]);
+
+  const handleScrollCarousel = (direction: 'left' | 'right') => {
+    if (!carouselRef.current) return;
+    const offset = direction === 'left' ? -220 : 220;
+    carouselRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+  };
 
   const handleClickMilestone = (item: ChronologyMilestoneItem) => {
     if (selectedMilestone?.id === item.id) {
@@ -91,8 +101,8 @@ export const Timeline: React.FC<TimelineProps> = ({
   };
 
   return (
-    <div className="fixed bottom-6 left-4 right-4 z-30 pointer-events-none no-print">
-      <div className="max-w-3xl mx-auto flex flex-col gap-1.5">
+    <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl z-20 pointer-events-none no-print">
+      <div className="w-full flex flex-col gap-2">
         {/* 1. Expandable Chronological Milestone Dossier Drawer */}
         {selectedMilestone && (
           <ChronologyDrawer
@@ -105,7 +115,7 @@ export const Timeline: React.FC<TimelineProps> = ({
 
         {/* 2. Collapsible Historical Era Chronicle Card */}
         {isChronicleExpanded && !selectedMilestone && (
-          <div className="bg-[#0F1C30]/94 backdrop-blur-xl border border-slate-700/75 rounded-2xl px-4 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.85)] pointer-events-auto transition-all duration-200">
+          <div className="bg-[#0F1C30]/95 backdrop-blur-xl border border-[#C5A059]/40 rounded-2xl px-4 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.85)] pointer-events-auto transition-all duration-200">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
               <div className="space-y-1 max-w-xl">
                 <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[#D4AF37] font-semibold flex-wrap">
@@ -186,15 +196,15 @@ export const Timeline: React.FC<TimelineProps> = ({
           </div>
         )}
 
-        {/* 3. Compact 2-Row Chronology Bar (Foldable into 1 thin line) */}
-        <div className="bg-[#0F1C30]/92 backdrop-blur-xl border border-slate-700/65 rounded-2xl px-2.5 py-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.8)] pointer-events-auto space-y-1.5">
-          {/* ROW 1: 3-Category Segmented Selector + Active Era Selector Pills + Minimize Button */}
-          <div className="flex items-center justify-between gap-2">
+        {/* 3. Elevated Glassmorphism 2-Level Chronology Bar */}
+        <div className="bg-[#0F1C30]/92 backdrop-blur-xl border border-[#C5A059]/40 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.8)] px-4 py-2.5 pointer-events-auto space-y-2">
+          {/* LEVEL 1 (Top Row): Left Category Tabs | Center Map Era Selector | Right Collapse Toggle */}
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
             {/* Left: 3 Taxonomic Categories */}
             <div
               role="tablist"
               aria-label="Chronological Data Taxonomy"
-              className="flex items-center gap-1 bg-[#09111E]/90 p-0.5 rounded-xl border border-slate-700/60 overflow-x-auto no-scrollbar shrink-0"
+              className="flex items-center gap-1 bg-[#09111E]/90 p-0.5 rounded-xl border border-slate-700/70 shrink-0"
             >
               {(
                 [
@@ -213,10 +223,14 @@ export const Timeline: React.FC<TimelineProps> = ({
                     onClick={() => {
                       setActiveCategory(cat.id);
                       if (isMinimized) setIsMinimized(false);
+                      carouselRef.current?.scrollTo({
+                        left: 0,
+                        behavior: 'smooth',
+                      });
                     }}
-                    className={`px-2 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[#1D4ED8] text-[#F8FAFC] border border-[#D4AF37]/80 shadow-sm'
+                        ? 'bg-[#1D4ED8] text-[#F8FAFC] border border-[#D4AF37]/85 shadow-sm'
                         : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-slate-800/60 border border-transparent'
                     }`}
                   >
@@ -226,30 +240,43 @@ export const Timeline: React.FC<TimelineProps> = ({
               })}
             </div>
 
-            {/* Right: Compact Era Selector + Chronicle Button + Minimize Toggle */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-              <div className="hidden sm:flex items-center gap-1 bg-[#09111E]/80 px-1.5 py-0.5 rounded-xl border border-slate-700/60">
-                <Clock className="w-3 h-3 text-[#D4AF37] shrink-0" />
-                {HISTORICAL_ERAS.map((era) => {
-                  const isEraSelected = activeEra.id === era.id;
-                  return (
+            {/* Center: Quick Map Era Selector (1681 · 1776 · 1861 · 1870 · 1950 · Present/Presente) */}
+            <div className="flex items-center gap-1 bg-[#09111E]/85 px-2 py-1 rounded-xl border border-slate-700/70 overflow-x-auto no-scrollbar">
+              <Clock className="w-3.5 h-3.5 text-[#D4AF37] shrink-0 mr-0.5" />
+              {HISTORICAL_ERAS.map((era, idx) => {
+                const isEraSelected = activeEra.id === era.id;
+                const localizedEraLabel = getLocalizedEra(
+                  era,
+                  language
+                ).yearLabel;
+                return (
+                  <React.Fragment key={era.id}>
+                    {idx > 0 && (
+                      <span
+                        aria-hidden="true"
+                        className="text-slate-600 text-[10px] select-none"
+                      >
+                        ·
+                      </span>
+                    )}
                     <button
-                      key={era.id}
                       type="button"
                       onClick={() => onSelectEra(era)}
-                      className={`px-1.5 py-0.5 rounded-md font-mono text-[10px] transition-colors cursor-pointer shrink-0 ${
+                      className={`px-2 py-0.5 rounded-md font-mono text-[11px] whitespace-nowrap transition-colors cursor-pointer shrink-0 ${
                         isEraSelected
-                          ? 'bg-[#B22234] text-[#F8FAFC] border border-[#D4AF37]/80 font-bold'
-                          : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+                          ? 'bg-[#B22234] text-[#F8FAFC] border border-[#D4AF37]/85 font-bold shadow-xs'
+                          : 'text-[#CBD5E1] hover:text-[#D4AF37] border border-transparent'
                       }`}
                     >
-                      {era.yearLabel}
+                      {localizedEraLabel}
                     </button>
-                  );
-                })}
-              </div>
+                  </React.Fragment>
+                );
+              })}
+            </div>
 
-              {/* Era Chronicle Info Toggle */}
+            {/* Right: Era Chronicle Button + Collapse Toggle (⌄ / ⌃) */}
+            <div className="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-0">
               <button
                 type="button"
                 onClick={() => {
@@ -257,6 +284,11 @@ export const Timeline: React.FC<TimelineProps> = ({
                   setIsChronicleExpanded((prev) => !prev);
                 }}
                 title={
+                  isChronicleExpanded
+                    ? t.timeline.hideChronicle
+                    : t.timeline.showChronicle
+                }
+                aria-label={
                   isChronicleExpanded
                     ? t.timeline.hideChronicle
                     : t.timeline.showChronicle
@@ -270,7 +302,6 @@ export const Timeline: React.FC<TimelineProps> = ({
                 <BookOpen className="w-3.5 h-3.5" />
               </button>
 
-              {/* Fold / Minimize Timeline Button */}
               <button
                 type="button"
                 onClick={() => {
@@ -282,74 +313,105 @@ export const Timeline: React.FC<TimelineProps> = ({
                 }}
                 title={
                   isMinimized
-                    ? language === 'en'
-                      ? 'Expand chronology bar'
-                      : 'Expandir barra de cronología'
-                    : language === 'en'
-                      ? 'Minimize chronology bar'
-                      : 'Minimizar barra de cronología'
+                    ? t.timeline.expandTimelineAria
+                    : t.timeline.collapseTimelineAria
                 }
-                className="px-2 py-1 rounded-lg bg-[#09111E]/85 border border-slate-700/70 text-[#94A3B8] hover:text-[#F8FAFC] hover:border-[#D4AF37] text-[10px] font-medium flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
+                aria-label={
+                  isMinimized
+                    ? t.timeline.expandTimelineAria
+                    : t.timeline.collapseTimelineAria
+                }
+                aria-expanded={!isMinimized}
+                className="w-7 h-7 rounded-lg bg-[#09111E]/85 border border-slate-700/70 hover:border-[#D4AF37] text-[#D4AF37] hover:text-[#F8FAFC] flex items-center justify-center shrink-0 cursor-pointer transition-colors"
               >
                 {isMinimized ? (
-                  <>
-                    <ChevronUp className="w-3 h-3 text-[#D4AF37]" />
-                    <span className="hidden md:inline">
-                      {language === 'en' ? 'Expand' : 'Expandir'}
-                    </span>
-                  </>
+                  <ChevronUp className="w-4 h-4" />
                 ) : (
-                  <>
-                    <ChevronDown className="w-3 h-3 text-[#D4AF37]" />
-                    <span className="hidden md:inline">
-                      {language === 'en' ? 'Minimize' : 'Minimizar'}
-                    </span>
-                  </>
+                  <ChevronDown className="w-4 h-4" />
                 )}
               </button>
             </div>
           </div>
 
-          {/* ROW 2: Slim Horizontal Carousel of Milestones & Years (Hidden when Minimized) */}
+          {/* LEVEL 2 (Bottom Row): Horizontal Carousel with Left/Right Arrows & Edge Fade Gradients */}
           {!isMinimized && (
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 border-t border-slate-800/80">
-              {filteredMilestones.map((item) => {
-                const isSelected = selectedMilestone?.id === item.id;
-                const shortTitle =
-                  language === 'en' ? item.shortTitleEn : item.shortTitleEs;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleClickMilestone(item)}
-                    className={`group px-2.5 py-1 rounded-lg text-left transition-all cursor-pointer border shrink-0 flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'bg-[#B22234] border-[#D4AF37] shadow-[0_0_12px_rgba(178,34,52,0.5)]'
-                        : 'bg-[#09111E]/80 hover:bg-[#1E3A8A]/50 border-slate-700/60 hover:border-[#D4AF37]/60'
-                    }`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                        isSelected
-                          ? 'bg-[#D4AF37] ring-2 ring-[#F8FAFC]/60'
-                          : 'bg-[#D4AF37]/80 group-hover:bg-[#D4AF37]'
-                      }`}
-                    />
-                    <span className="font-mono text-[11px] font-bold text-[#D4AF37] tabular-nums">
-                      {item.year === 1600 ? 'Pre-1681' : item.year}
-                    </span>
-                    <span
-                      className={`text-[11px] whitespace-nowrap ${
-                        isSelected
-                          ? 'text-[#F8FAFC] font-medium'
-                          : 'text-[#CBD5E1] group-hover:text-[#F8FAFC]'
-                      }`}
-                    >
-                      {shortTitle}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="relative flex items-center gap-1.5 pt-2 border-t border-slate-800/85">
+              {/* Circular Scroll Left Button (‹) */}
+              <button
+                type="button"
+                onClick={() => handleScrollCarousel('left')}
+                title={t.timeline.scrollLeftAria}
+                aria-label={t.timeline.scrollLeftAria}
+                className="w-7 h-7 rounded-full bg-[#09111E]/95 hover:bg-[#1E3A8A] border border-[#C5A059]/45 hover:border-[#D4AF37] text-[#D4AF37] hover:text-[#F8FAFC] flex items-center justify-center shrink-0 cursor-pointer transition-colors shadow-md z-10"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {/* Scrollable Milestones Track with Subtle Edge Gradients */}
+              <div className="relative flex-1 min-w-0 overflow-hidden">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-[#0F1C30] to-transparent z-10"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-[#0F1C30] to-transparent z-10"
+                />
+
+                <div
+                  ref={carouselRef}
+                  className="flex items-center gap-2 overflow-x-auto no-scrollbar px-2 scroll-smooth"
+                >
+                  {filteredMilestones.map((item) => {
+                    const isSelected = selectedMilestone?.id === item.id;
+                    const shortTitle =
+                      language === 'en' ? item.shortTitleEn : item.shortTitleEs;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleClickMilestone(item)}
+                        className={`group px-3 py-1.5 rounded-xl text-left transition-all cursor-pointer border whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                          isSelected
+                            ? 'bg-[#B22234] border-[#D4AF37] shadow-[0_0_12px_rgba(178,34,52,0.5)]'
+                            : 'bg-[#09111E]/85 hover:bg-[#1E3A8A]/55 border-slate-700/70 hover:border-[#D4AF37]/70'
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                            isSelected
+                              ? 'bg-[#D4AF37] ring-2 ring-[#F8FAFC]/60'
+                              : 'bg-[#D4AF37]/80 group-hover:bg-[#D4AF37]'
+                          }`}
+                        />
+                        <span className="font-mono text-[11px] font-bold text-[#D4AF37] tabular-nums">
+                          {item.year === 1600 ? 'Pre-1681' : item.year}
+                        </span>
+                        <span
+                          className={`text-xs whitespace-nowrap ${
+                            isSelected
+                              ? 'text-[#F8FAFC] font-semibold'
+                              : 'text-[#E2E8F0] group-hover:text-[#F8FAFC]'
+                          }`}
+                        >
+                          {shortTitle}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Circular Scroll Right Button (›) */}
+              <button
+                type="button"
+                onClick={() => handleScrollCarousel('right')}
+                title={t.timeline.scrollRightAria}
+                aria-label={t.timeline.scrollRightAria}
+                className="w-7 h-7 rounded-full bg-[#09111E]/95 hover:bg-[#1E3A8A] border border-[#C5A059]/45 hover:border-[#D4AF37] text-[#D4AF37] hover:text-[#F8FAFC] flex items-center justify-center shrink-0 cursor-pointer transition-colors shadow-md z-10"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>
